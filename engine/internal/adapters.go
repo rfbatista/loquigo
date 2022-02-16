@@ -3,9 +3,9 @@ package internal
 import (
 	"github.com/google/wire"
 
-	chat "loquigo/engine/pkg/adapters/transport/http"
+	chat "loquigo/engine/src/adapters/transport/http"
 )
 
 var ChatProviderSet = wire.NewSet(
-	EventManagerSet,
+	ChatSet,
 	chat.NewChatController)

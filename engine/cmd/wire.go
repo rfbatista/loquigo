@@ -7,12 +7,14 @@ import (
 	"loquigo/engine/internal"
 
 	//Infrastructure
-	infra "loquigo/engine/pkg/infrastructure"
+	infra "loquigo/engine/src/infrastructure"
 
 	"github.com/google/wire"
 )
 
 func InitializeEvent() (infra.Server, error) {
-	wire.Build(internal.ChatProviderSet, infra.NewServer)
+	wire.Build(
+		internal.ChatProviderSet,
+		infra.NewServer)
 	return infra.Server{}, nil
 }

@@ -7,9 +7,10 @@
 package main
 
 import (
-	"loquigo/engine/pkg/adapters/transport/http"
-	"loquigo/engine/pkg/core/modules/eventmanager"
-	"loquigo/engine/pkg/infrastructure"
+	"loquigo/engine/src/adapters/transport/http"
+	"loquigo/engine/src/core/modules/dialogmanager"
+	"loquigo/engine/src/core/modules/eventmanager"
+	"loquigo/engine/src/infrastructure"
 )
 
 // Injectors from wire.go:
@@ -17,7 +18,8 @@ import (
 func InitializeEvent() (infrastructure.Server, error) {
 	httpClient := infrastructure.NewHttpClient()
 	sendMessageService := eventmanager.NewSendMessageService(httpClient)
-	chatService := eventmanager.NewChatService(sendMessageService)
+	runDialogService := dialogmanager.NewRunDialogService()
+	chatService := eventmanager.NewChatService(sendMessageService, runDialogService)
 	chatController := adapters.NewChatController(chatService)
 	server := infrastructure.NewServer(chatController)
 	return server, nil
