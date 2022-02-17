@@ -4,10 +4,12 @@ import (
 	"loquigo/engine/src/core/domain"
 )
 
-type FindContextService struct{}
+type FindContextService struct {
+	repo UserContextRepository
+}
 
-func NewFindContextService() FindContextService {
-	return FindContextService{}
+func NewFindContextService(repo UserContextRepository) FindContextService {
+	return FindContextService{repo: repo}
 }
 
 func (f FindContextService) Run(event domain.Event) (domain.UserContext, error) {
