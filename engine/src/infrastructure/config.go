@@ -23,3 +23,7 @@ func (c *Config) Init() {
 func (c Config) DbConnection() string {
 	return strings.Join([]string{c.dbuser, c.dbname, c.dbport}, ":")
 }
+
+func (c Config) DbName() string {
+	return c.dbname
+}

@@ -12,8 +12,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func NewUserContextRepo(mongodb database.MongoDB, logger infrastructure.Logger) UserContextRepo {
-	usersCollection := mongodb.Client.Database("testing").Collection("users")
+func NewUserContextRepo(mongodb database.MongoDB, logger infrastructure.Logger, cfg infrastructure.Config) UserContextRepo {
+	usersCollection := mongodb.Client.Database(cfg.DbName()).Collection("user_context")
 	return UserContextRepo{client: mongodb, collection: *usersCollection, logger: logger}
 }
 
