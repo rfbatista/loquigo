@@ -1,8 +1,22 @@
 package infrastructure
 
 import (
+	"os"
 	"strings"
+
+	"github.com/joho/godotenv"
 )
+
+func NewConfig() Config {
+	godotenv.Load()
+	port := 3000
+	dbname := os.Getenv("MONGO_DB_NAME")
+	dbport := os.Getenv("MONGO_PORT")
+	dbuser := os.Getenv("MONGO_DB_USER")
+	dbpassword := os.Getenv("MONGO_PWD")
+	dbhost := os.Getenv("MONGO_HOST")
+	return Config{port: port, dbname: dbname, dbport: dbport, dbuser: dbuser, dbpassword: dbpassword, dbhost: dbhost}
+}
 
 type Config struct {
 	port       int
@@ -10,14 +24,7 @@ type Config struct {
 	dbport     string
 	dbuser     string
 	dbpassword string
-}
-
-func (c *Config) Init() {
-	c.port = 3000
-	c.dbname = ""
-	c.dbport = ""
-	c.dbuser = ""
-	c.dbpassword = ""
+	dbhost     string
 }
 
 func (c Config) DbConnection() string {
@@ -26,4 +33,16 @@ func (c Config) DbConnection() string {
 
 func (c Config) DbName() string {
 	return c.dbname
+}
+func (c Config) DbPort() string {
+	return c.dbport
+}
+func (c Config) DbUser() string {
+	return c.dbuser
+}
+func (c Config) DbPassword() string {
+	return c.dbpassword
+}
+func (c Config) DbHost() string {
+	return c.dbhost
 }

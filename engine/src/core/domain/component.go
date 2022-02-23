@@ -4,7 +4,11 @@ type Stop struct {
 	FlowId string
 	StepId string
 }
+type GoTo struct {
+	FlowId string
+	StepId string
+}
 
 type Component interface {
-	Run(m Message, u UserContext) ([]Message, *Stop, error)
+	Run(userMess Message, u UserContext, botMessages []Message) ([]Message, *Stop, *GoTo)
 }

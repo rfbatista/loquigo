@@ -5,6 +5,10 @@ type HoldComponent struct {
 	StepId string
 }
 
-func (h HoldComponent) Run(m Message, u UserContext) ([]Message, *Stop, error) {
-	return []Message{}, &Stop{StepId: h.StepId, FlowId: h.FlowId}, nil
+func NewHold(flowId string, stepId string) HoldComponent {
+	return HoldComponent{FlowId: flowId, StepId: stepId}
+}
+
+func (h HoldComponent) Run(m Message, u UserContext, botMessages []Message) ([]Message, *Stop, *GoTo) {
+	return botMessages, &Stop{StepId: h.StepId, FlowId: h.FlowId}, nil
 }

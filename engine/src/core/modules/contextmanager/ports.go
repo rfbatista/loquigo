@@ -5,6 +5,7 @@ import (
 )
 
 type UserContextRepository interface {
-	SaveMemory(context domain.UserContext) error
+	SaveMemory(ctx domain.UserContext) error
 	FindByUserId(userId string) (domain.UserContext, error)
+	Create(userContext domain.UserContext)
 }

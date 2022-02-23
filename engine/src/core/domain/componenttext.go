@@ -1,16 +1,15 @@
 package domain
 
 type TextComponent struct {
-	FlowId string
-	StepId string
-	text   string
+	text string
 }
 
-func CreateText(text string) TextComponent {
+func NewText(text string) TextComponent {
 	return TextComponent{text: text}
 }
 
-func (t TextComponent) Run(m Message, u UserContext) ([]Message, *Stop, error) {
-	var message Message = CreateTextMessage(t.text)
-	return []Message{message}, nil, nil
+func (t TextComponent) Run(m Message, u UserContext, botMessages []Message) ([]Message, *Stop, *GoTo) {
+	var message Message = NewTextMessage(t.text)
+	messages := append(botMessages, message)
+	return messages, nil, nil
 }

@@ -14,6 +14,6 @@ type Message struct {
 	Payload `json:"payload"`
 }
 
-func CreateTextMessage(s string) Message {
+func NewTextMessage(s string) Message {
 	return Message{"", CreateTextPayload(s)}
 }

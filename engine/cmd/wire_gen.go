@@ -4,21 +4,28 @@
 //go:build !wireinject
 // +build !wireinject
 
-package main
+package cmd
 
 import (
 	"loquigo/engine/src/adapters/transport/http"
+	"loquigo/engine/src/core/modules/contextmanager"
 	"loquigo/engine/src/core/modules/dialogmanager"
 	"loquigo/engine/src/core/modules/eventmanager"
+	"loquigo/engine/src/core/modules/templatepool"
 	"loquigo/engine/src/infrastructure"
+	"loquigo/engine/src/infrastructure/database/mongo"
+	"loquigo/engine/src/infrastructure/database/mongo/repositories"
 )
 
 // Injectors from wire.go:
 
-func InitializeEvent() (infrastructure.Server, error) {
+func InitializeEvent(db mongo.MongoDB) (infrastructure.Server, error) {
 	httpClient := infrastructure.NewHttpClient()
 	sendMessageService := eventmanager.NewSendMessageService(httpClient)
-	runDialogService := dialogmanager.NewRunDialogService()
+	templatePoolService := templatepool.NewTemplatePoolService()
+	userContextRepository := repositories.NewUserContextRepo(db)
+	findContextService := contextmanager.NewFindContextService(userContextRepository)
+	runDialogService := dialogmanager.NewRunDialogService(templatePoolService, findContextService)
 	chatService := eventmanager.NewChatService(sendMessageService, runDialogService)
 	chatController := adapters.NewChatController(chatService)
 	server := infrastructure.NewServer(chatController)

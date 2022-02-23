@@ -12,9 +12,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func NewUserStatestRepo(mongodb database.MongoDB, logger infrastructure.Logger, cfg infrastructure.Config) UserStatesRepo {
-	usersCollection := mongodb.Client.Database(cfg.DbName()).Collection("user_states")
-	return UserStatesRepo{client: mongodb, collection: *usersCollection, logger: logger}
+func NewUserStatestRepo(mongodb database.MongoDB) UserStatesRepo {
+	usersCollection := mongodb.Collection("user_states")
+	return UserStatesRepo{client: mongodb, collection: usersCollection}
 }
 
 type UserStatesRepo struct {

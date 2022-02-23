@@ -7,6 +7,10 @@ type UserContext struct {
 	memory map[string]string `bson:"memory"`
 }
 
+func NewUserContext() UserContext {
+	return UserContext{}
+}
+
 func (u UserContext) GetMemoryVariable(variable string) string {
 	return u.memory[variable]
 }

@@ -1,20 +1,18 @@
 //go:build wireinject
 // +build wireinject
 
-package main
+package cmd
 
 import (
-	"loquigo/engine/internal"
-
-	//Infrastructure
 	infra "loquigo/engine/src/infrastructure"
+	"loquigo/engine/src/infrastructure/database/mongo"
 
 	"github.com/google/wire"
 )
 
-func InitializeEvent() (infra.Server, error) {
+func InitializeEvent(db mongo.MongoDB) (infra.Server, error) {
 	wire.Build(
-		internal.ChatProviderSet,
+		ChatSet,
 		infra.NewServer)
 	return infra.Server{}, nil
 }

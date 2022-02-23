@@ -12,11 +12,11 @@ func NewFindContextService(repo UserContextRepository) FindContextService {
 	return FindContextService{repo: repo}
 }
 
-func (f FindContextService) Run(event domain.Event) (*domain.UserContext, error) {
+func (f FindContextService) Run(event domain.Event) (domain.UserContext, error) {
 	//todo: need to add bot in in this repo
-	context, err := f.repo.FindByUserId(event.User.ID)
-	if err != err {
-		return nil, err
-	}
-	return &context, nil
+	//context, err := f.repo.FindByUserId(event.User.ID)
+	//if err != err {
+	//	return domain.UserContext{}, err
+	//}
+	return domain.NewUserContext(), nil
 }

@@ -1,3 +1,0 @@
-package mod
-
-func New() {}

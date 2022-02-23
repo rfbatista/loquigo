@@ -6,8 +6,8 @@ import (
 	"loquigo/engine/src/core/modules/templatepool"
 )
 
-func NewRunDialogService() RunDialogService {
-	return RunDialogService{}
+func NewRunDialogService(template templatepool.TemplatePoolService, contextManager contextmanager.FindContextService) RunDialogService {
+	return RunDialogService{template: template, contextManager: contextManager}
 }
 
 type RunDialogService struct {
