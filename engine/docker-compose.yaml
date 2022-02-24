@@ -1,0 +1,49 @@
+version: "3.8"
+
+networks:
+  loquigo-network:
+
+volumes:
+  loquigo-data:
+    name: loquigo-data 
+
+services:
+  loquigo-mongodb:
+    container_name: loquigo-mongodb
+    image: mongo:4.2
+    restart: always
+    command: mongod --quiet --logpath /dev/null 
+    env_file: 
+      - .env
+    ports:
+      - $MONGO_PORT:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$MONGO_DB_USER
+      - MONGO_INITDB_ROOT_PASSWORD=$MONGO_PWD
+      - MONGO_INITDB_DATABASE=$MONGO_DB_NAME
+    networks:
+      - loquigo-network
+    volumes:
+      - loquigo-data:/data/db
+
+  loquigo:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: loquigo-api
+    env_file: .env
+    ports:
+      - $PORT:$PORT
+    environment:
+      - MONGO_DB_NAME=$MONGO_DB_NAME
+      - MONGO_DB_USER=$MONGO_DB_USER
+      - MONGO_PWD=$MONGO_PWD
+      - MONGO_PORT=27017
+      - MONGO_HOST=loquigo-mongodb
+      - 9229:9229
+    volumes:
+      - ./:/usr/app
+    networks:
+      - loquigo-network
+    depends_on:
+      - loquigo-mongodb
