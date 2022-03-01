@@ -28,8 +28,8 @@ func (s RunnerService) Run(i RunnerInput) ([]domain.Message, domain.State) {
 	}
 	var flowId string = i.state.FlowId
 	var stepId string = i.state.StepId
-	var goTo *domain.GoTo
-	var stop *domain.Stop
+	var goTo *GoTo
+	var stop *Stop
 	messages := []domain.Message{}
 	step := s.flow[flowId][stepId]
 	for outer := 0; outer < 30; outer++ {
@@ -44,13 +44,13 @@ func (s RunnerService) Run(i RunnerInput) ([]domain.Message, domain.State) {
 	return messages, domain.NewState(i.state.FlowId, i.state.StepId)
 }
 
-func (s RunnerService) RunFlow(startStep Step, i RunnerInput, previous []domain.Message) ([]domain.Message, *domain.Stop, *domain.GoTo) {
+func (s RunnerService) RunFlow(startStep IStep, i RunnerInput, previous []domain.Message) ([]domain.Message, *Stop, *GoTo) {
 	currentStep := startStep
-	var changeFlow *domain.GoTo
-	var stopFlow *domain.Stop
+	var changeFlow *GoTo
+	var stopFlow *Stop
 	var previousMessages []domain.Message = previous
 	if startStep == nil {
-		return []domain.Message{}, &domain.Stop{FlowId: i.state.FlowId, StepId: i.state.StepId}, &domain.GoTo{}
+		return []domain.Message{}, &Stop{FlowId: i.state.FlowId, StepId: i.state.StepId}, &GoTo{}
 	}
 	for circuitBreaker := 0; circuitBreaker < 30; circuitBreaker++ {
 		previousMessages, stopFlow, changeFlow = s.RunStep(currentStep, i, previousMessages)
@@ -65,12 +65,12 @@ func (s RunnerService) RunFlow(startStep Step, i RunnerInput, previous []domain.
 	return previousMessages, stopFlow, changeFlow
 }
 
-func (s RunnerService) RunStep(step Step, i RunnerInput, messages []domain.Message) ([]domain.Message, *domain.Stop, *domain.GoTo) {
+func (s RunnerService) RunStep(step IStep, i RunnerInput, messages []domain.Message) ([]domain.Message, *Stop, *GoTo) {
 	if step == nil {
 		return []domain.Message{}, nil, nil
 	}
-	var changeFlow *domain.GoTo
-	var stopFlow *domain.Stop
+	var changeFlow *GoTo
+	var stopFlow *Stop
 	var botMessages []domain.Message = messages
 	for _, component := range step(i.message, i.context, messages) {
 		botMessages, stopFlow, changeFlow = component.Run(i.message, i.context, botMessages)

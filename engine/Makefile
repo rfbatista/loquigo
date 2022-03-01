@@ -4,5 +4,7 @@ run:
 	go run main.go
 wire:
 	wire ./cmd
-dev:
+build:
 	docker-compose up --build
+dev:
+	docker-compose up

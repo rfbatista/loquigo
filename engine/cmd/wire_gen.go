@@ -8,7 +8,6 @@ package cmd
 
 import (
 	"loquigo/engine/src/adapters/transport/http"
-	"loquigo/engine/src/core/modules/contextmanager"
 	"loquigo/engine/src/core/modules/dialogmanager"
 	"loquigo/engine/src/core/modules/eventmanager"
 	"loquigo/engine/src/core/modules/templatepool"
@@ -22,12 +21,23 @@ import (
 func InitializeEvent(db mongo.MongoDB) (infrastructure.Server, error) {
 	httpClient := infrastructure.NewHttpClient()
 	sendMessageService := eventmanager.NewSendMessageService(httpClient)
-	templatePoolService := templatepool.NewTemplatePoolService()
+	userStatesRepo := repositories.NewUserStatestRepo(db)
+	templateRunnerService := templatepool.NewTemplatePoolService(userStatesRepo)
 	userContextRepository := repositories.NewUserContextRepo(db)
-	findContextService := contextmanager.NewFindContextService(userContextRepository)
-	runDialogService := dialogmanager.NewRunDialogService(templatePoolService, findContextService)
-	chatService := eventmanager.NewChatService(sendMessageService, runDialogService)
+	findContextService := dialogmanager.NewFindContextService(userContextRepository)
+	runDialogService := dialogmanager.NewRunDialogService(templateRunnerService, findContextService)
+	userRepository := repositories.NewUserRepository(db)
+	chatService := eventmanager.NewChatService(sendMessageService, runDialogService, userRepository)
 	chatController := adapters.NewChatController(chatService)
-	server := infrastructure.NewServer(chatController)
+	flowRepository := repositories.NewFlowRepository(db)
+	flowService := templatepool.NewFlowService(flowRepository)
+	flowController := adapters.NewFlowController(flowService)
+	stepRepository := repositories.NewStepRepository(db)
+	stepService := templatepool.NewStepService(stepRepository)
+	stepController := adapters.NewStepController(stepService)
+	componentRepository := repositories.NewComponentRepo(db)
+	componentService := templatepool.NewComponentService(componentRepository)
+	componentController := adapters.NewComponentController(componentService)
+	server := infrastructure.NewServer(chatController, flowController, stepController, componentController)
 	return server, nil
 }

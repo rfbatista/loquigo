@@ -1,31 +1,32 @@
 package infrastructure
 
 import (
+	adapters "loquigo/engine/src/adapters/transport/http"
 	controller "loquigo/engine/src/adapters/transport/http"
-	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
-type Server struct {
-	ChatController controller.ChatController
+func NewServer(c controller.ChatController, f controller.FlowController, s controller.StepController, co controller.ComponentController) Server {
+	return Server{ChatController: c, FlowController: f, StepController: s, ComponentController: co}
 }
 
-func NewServer(c controller.ChatController) Server {
-	return Server{ChatController: c}
+type Server struct {
+	ChatController      controller.ChatController
+	FlowController      controller.FlowController
+	StepController      controller.StepController
+	ComponentController controller.ComponentController
 }
 
 func (s Server) Start() {
-	r := gin.Default()
-	r.Use(gin.Recovery())
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
-	v1 := r.Group("/v1")
-	{
-		v1.POST("/chat", s.ChatController.PostMessage)
-	}
-	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	r := adapters.NewRouter(gin.Default())
+	r.Router.Use(gin.Recovery())
+	r.Router.Use(cors.Default())
+	v1 := r.Router.Group("/v1")
+	r.AddFlowRoutes(v1, s.FlowController)
+	r.AddStepRoutes(v1, s.StepController)
+	r.AddComponentRoutes(v1, s.ComponentController)
+	r.AddChatRoutes(v1, s.ChatController)
+	r.Router.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }

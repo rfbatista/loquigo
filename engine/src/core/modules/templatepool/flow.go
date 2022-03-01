@@ -1,16 +1,19 @@
 package templatepool
 
-import (
-	"loquigo/engine/src/core/domain"
-)
-
 type FlowHash = map[string]StepHash
+type StepHash = map[string]IStep
 
-type Flow interface {
+type IFlow interface {
 	Name() string
 	Steps(string) Step
 }
 
-type StepHash = map[string]Step
+func NewFlow(ID string, BotId string, name string) Flow {
+	return Flow{ID: ID, BotId: BotId, Name: name}
+}
 
-type Step = func(message domain.Message, context domain.UserContext, messages []domain.Message) []domain.Component
+type Flow struct {
+	ID    string `json:"id"`
+	BotId string `json:"bot_id"`
+	Name  string `json:"name"`
+}

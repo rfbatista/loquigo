@@ -5,13 +5,14 @@ import (
 	"loquigo/engine/src/core/modules/dialogmanager"
 )
 
-type ChatService struct {
-	dm     dialogmanager.RunDialogService
-	sender SendMessageService
+func NewChatService(s SendMessageService, d dialogmanager.RunDialogService, userRepo UserRepository) ChatService {
+	return ChatService{sender: s, dm: d, userRepo: userRepo}
 }
 
-func NewChatService(s SendMessageService, d dialogmanager.RunDialogService) ChatService {
-	return ChatService{sender: s, dm: d}
+type ChatService struct {
+	dm       dialogmanager.RunDialogService
+	sender   SendMessageService
+	userRepo UserRepository
 }
 
 func (c ChatService) Run(e domain.Event) ([]domain.Message, error) {
@@ -27,6 +28,8 @@ func (c ChatService) Run(e domain.Event) ([]domain.Message, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	go c.userRepo.FindUserOrCreate(e.User.ExternalId)
 
 	messages, _ := c.dm.Run(e)
 	c.sender.Send(messages)

@@ -10,10 +10,12 @@ const (
 type Payload interface{}
 
 type Message struct {
-	ID      string `json:"id"`
-	Payload `json:"payload"`
+	ID   string `json:"id"`
+	Type string `json:"type"`
+	Text string `json:"text"`
 }
 
 func NewTextMessage(s string) Message {
-	return Message{"", CreateTextPayload(s)}
+	m := CreateTextPayload(s)
+	return Message{"", m.Type, m.Text}
 }

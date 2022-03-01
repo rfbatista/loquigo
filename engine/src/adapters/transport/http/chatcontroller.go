@@ -6,15 +6,21 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"loquigo/engine/src/core/domain"
-	evm "loquigo/engine/src/core/modules/eventmanager"
+	"loquigo/engine/src/core/modules/eventmanager"
 )
 
-func NewChatController(e evm.ChatService) ChatController {
+func NewChatController(e eventmanager.ChatService) ChatController {
 	return ChatController{eventService: e}
 }
 
+func (r HttpRouter) AddChatRoutes(rg *gin.RouterGroup, controller ChatController) {
+	route := rg.Group("/chat")
+
+	route.POST("/", controller.PostMessage)
+}
+
 type ChatController struct {
-	eventService evm.ChatService
+	eventService eventmanager.ChatService
 }
 
 func (chat ChatController) PostMessage(c *gin.Context) {
