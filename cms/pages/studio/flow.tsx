@@ -1,5 +1,5 @@
 import ReactFlow, { Controls } from 'react-flow-renderer';
-import { useGetStepQuery } from 'services/loquiapi';
+import { useGetFlowMapQuery, useGetStepQuery } from 'services/loquiapi';
 import StepNode from 'components/StepNode';
 import { useSelector } from 'react-redux';
 import { selectActiveFlow } from 'store/flow';
@@ -13,11 +13,12 @@ const nodeTypes = {
   step: StepNode,
 };
 
-const Map = ({ containerRef }) => {
+const Map = ({ containerRef, activeFlow }) => {
   const [{ width, height }] = useGetSize(containerRef);
+  const { data, isLoading } = useGetFlowMapQuery(activeFlow?.id);
   return (
     <div style={{ height: height - 65, width: width }}>
-      <ReactFlow elements={elements} nodeTypes={nodeTypes}>
+      <ReactFlow elements={data ?? []} nodeTypes={nodeTypes}>
         <Controls />
       </ReactFlow>
     </div>
@@ -35,16 +36,13 @@ const FlowMap = () => {
       style={{ height: '99%', width: '99%' }}
     >
       <Header>
-        <div className='m-4 text-4xl' style={{ height: '40px' }}>
+        <div className='relative m-4 text-4xl' style={{ height: '40px' }}>
           {activeFlow.name}
         </div>
       </Header>
-      <Content>
-        <Map containerRef={ParentReference} />
+      <Content className='relative'>
+        <Map containerRef={ParentReference} activeFlow={activeFlow} />
       </Content>
-      <div className='absolute right-10 top-10'>
-        <Panel />
-      </div>
     </div>
   );
 };

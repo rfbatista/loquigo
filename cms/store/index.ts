@@ -12,10 +12,12 @@ import {
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { loquiapi } from 'services/loquiapi';
 import flowReducer from './flow';
+import stepReducer from './step';
 
 const reducers = {
   [loquiapi.reducerPath]: loquiapi.reducer,
   flows: flowReducer,
+  steps: stepReducer,
 };
 
 // const combinedReducer = combineReducers<typeof reducers>(reducers);

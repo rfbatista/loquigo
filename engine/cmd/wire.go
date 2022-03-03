@@ -16,6 +16,7 @@ func InitializeEvent(db mongo.MongoDB) (infra.Server, error) {
 		StepSet,
 		ComponentSet,
 		ChatSet,
+		FlowMapSet,
 		infra.NewServer)
 	return infra.Server{}, nil
 }

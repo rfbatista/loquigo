@@ -1,16 +1,18 @@
 // export type IFlow = [Step | Edge];
 
-type Step = {
+import { IStep } from './step';
+
+export type IStepNode = {
   id: string;
-  type?: 'output' | 'input';
-  data: any;
+  type?: 'output' | 'input' | 'step';
+  data: IStep;
   position: {
     x: number;
     y: number;
   };
 };
 
-type Edge = {
+export type Edge = {
   id: string;
   source: string;
   target: string;

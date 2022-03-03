@@ -1,7 +1,6 @@
 import { BaseQueryFn } from '@reduxjs/toolkit/query';
 import { AxiosRequestConfig } from 'axios';
 import { elements } from 'data/nodes';
-import { IFlow } from './types';
 
 const mockBaseQuery =
   (

@@ -7,6 +7,7 @@
 package cmd
 
 import (
+	"loquigo/engine/src/adapters/services"
 	"loquigo/engine/src/adapters/transport/http"
 	"loquigo/engine/src/core/modules/dialogmanager"
 	"loquigo/engine/src/core/modules/eventmanager"
@@ -38,6 +39,8 @@ func InitializeEvent(db mongo.MongoDB) (infrastructure.Server, error) {
 	componentRepository := repositories.NewComponentRepo(db)
 	componentService := templatepool.NewComponentService(componentRepository)
 	componentController := adapters.NewComponentController(componentService)
-	server := infrastructure.NewServer(chatController, flowController, stepController, componentController)
+	flowMapService := adapterservices.NewFlowMapService(flowService, stepService, componentService)
+	flowMapController := adapters.NewFlowMapController(flowMapService)
+	server := infrastructure.NewServer(chatController, flowController, stepController, componentController, flowMapController)
 	return server, nil
 }

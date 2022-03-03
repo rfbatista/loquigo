@@ -8,8 +8,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewServer(c controller.ChatController, f controller.FlowController, s controller.StepController, co controller.ComponentController) Server {
-	return Server{ChatController: c, FlowController: f, StepController: s, ComponentController: co}
+func NewServer(
+	c controller.ChatController,
+	f controller.FlowController,
+	s controller.StepController,
+	co controller.ComponentController,
+	fo controller.FlowMapController) Server {
+	return Server{
+		ChatController:      c,
+		FlowController:      f,
+		StepController:      s,
+		ComponentController: co,
+		FlowMapController:   fo}
 }
 
 type Server struct {
@@ -17,6 +27,7 @@ type Server struct {
 	FlowController      controller.FlowController
 	StepController      controller.StepController
 	ComponentController controller.ComponentController
+	FlowMapController   controller.FlowMapController
 }
 
 func (s Server) Start() {
@@ -28,5 +39,6 @@ func (s Server) Start() {
 	r.AddStepRoutes(v1, s.StepController)
 	r.AddComponentRoutes(v1, s.ComponentController)
 	r.AddChatRoutes(v1, s.ChatController)
+	r.AddFlowMapRoutes(v1, s.FlowMapController)
 	r.Router.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }

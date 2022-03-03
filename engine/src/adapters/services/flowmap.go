@@ -12,6 +12,7 @@ type NodeHandler struct {
 }
 
 type NodeData struct {
+	ID         string                   `json:"id"`
 	Name       string                   `json:"name"`
 	Components []templatepool.Component `json:"components"`
 	Handlers   []NodeHandler            `json:"handlers"`
@@ -60,6 +61,7 @@ func createNodeFromStep(step templatepool.Step, position NodePosition) Node {
 		Id:   step.ID,
 		Type: "step",
 		Data: NodeData{
+			ID:   step.ID,
 			Name: step.Name,
 		},
 		Position: position,

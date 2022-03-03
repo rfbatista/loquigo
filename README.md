@@ -1,3 +1,4 @@
+# WIP
 
 | Status | Feature           | Release |
 |--------|-------------------|---------|
@@ -9,6 +10,7 @@
 |        | Reply Engine      |         |
 |        | Bot Registry      |         |
 |        | Context Manager   |         |
+<<<<<<< HEAD
 
 
 - Etapas do bot builder: Processo de build dos componentes -> Registro dos estados (steps)
@@ -16,3 +18,5 @@
 
 Todos os bots devem ter um flow `begin` e todo flow deve
 ter um step `start` <- isso pode virar uma propiedade do flow e step ao inves de nomenclatura dessas entidades
+=======
+>>>>>>> 27ab908840bfe51606a27c76339421bf1c945246

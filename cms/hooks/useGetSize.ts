@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useCallback, useRef, MutableRefObject } from 'react';
 import useEventListener from './useEventListerner';
 import useIsomorphicLayoutEffect from './useIsomorphicLayoutEffect';
@@ -23,14 +24,14 @@ const useGetSize = (ref: MutableRefObject<any>): [Size] => {
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ref.current?.offsetHeight, ref.current?.offsetWidth]);
+  }, []);
 
   // useEventListener('resize', handleSize);
 
-  useIsomorphicLayoutEffect(() => {
+  React.useEffect(() => {
     handleSize();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ref.current?.offsetHeight, ref.current?.offsetWidth]);
+  }, [ref.current?.offsetWidth, ref.current?.offsetHeight]);
 
   return [size];
 };
