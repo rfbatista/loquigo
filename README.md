@@ -1,5 +1,6 @@
 # WIP
 
+Work in Progress
 | Status | Feature           | Release |
 |--------|-------------------|---------|
 |        | Dialog Registry   |         |
@@ -18,5 +19,8 @@
 
 Todos os bots devem ter um flow `begin` e todo flow deve
 ter um step `start` <- isso pode virar uma propiedade do flow e step ao inves de nomenclatura dessas entidades
+<<<<<<< HEAD
 =======
 >>>>>>> 27ab908840bfe51606a27c76339421bf1c945246
+=======
+>>>>>>> 5faf0ef4dbef2f960db749076ea18a175e028b38
