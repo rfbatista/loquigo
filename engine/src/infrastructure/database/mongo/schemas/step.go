@@ -23,5 +23,5 @@ type StepSchema struct {
 }
 
 func (s StepSchema) ToDomain() templatepool.Step {
-	return templatepool.NewStep(s.ID.Hex(), s.FlowId.String(), s.Name)
+	return templatepool.NewStep(s.ID.Hex(), s.FlowId.Hex(), s.Name)
 }

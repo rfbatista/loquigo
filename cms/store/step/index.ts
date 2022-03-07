@@ -1,6 +1,16 @@
-import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import { useUpdateStepMutation } from 'services/loquiapi';
 import { IStep } from '../../types/step';
 import { IStepNode } from '../../types/stepnode';
+
+const addComponentInStep = createAsyncThunk(
+  'users/fetchByIdStatus',
+  async (userId, thunkAPI) => {
+		const [] = useUpdateStepMutation()
+    const response = await userAPI.fetchById(userId)
+    return response.data
+  }
+)
 
 const stepAdapter = createEntityAdapter<IStepNode>({
   selectId: (stepnode) => stepnode.id,
@@ -15,6 +25,7 @@ const stepSlice = createSlice({
     stepAdded: stepAdapter.addOne,
     stepsAdded: stepAdapter.addMany,
     stepsReceived: stepAdapter.setAll,
+		editStep: stepAdapter.updateOne,
     setActiveStep: (state, action) => {
       state.activeStep = action.payload;
     },

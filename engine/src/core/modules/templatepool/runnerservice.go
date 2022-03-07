@@ -15,8 +15,7 @@ type TemplateRunnerService struct {
 func (t TemplateRunnerService) Run(event domain.Event, context domain.UserContext) ([]domain.Message, error) {
 	state, nil := t.userStateRepo.FindByUserId(event.User.ExternalId)
 	input := NewRunnerInput(event.Message, context, state)
-	onboarding := NewOnboarding()
-	service := RunnerService{flow: onboarding}
+	service := RunnerService{}
 	res, newState := service.Run(input)
 	t.userStateRepo.Update(t.newUserState(state, newState))
 	return res, nil

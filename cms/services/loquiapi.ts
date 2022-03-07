@@ -36,6 +36,10 @@ export const loquiapi = createApi({
       query: (step) => ({ url: `/step/`, method: 'POST', data: step }),
       invalidatesTags: ['Step'],
     }),
+    updateStep: builder.mutation({
+      query: (step) => ({ url: `/step/${step.id}`, method: 'PUT', data: step }),
+      invalidatesTags: ['Step'],
+    }),
     deleteStep: builder.mutation({
       query: (step) => ({ url: `/step/`, method: 'DELETE', data: step }),
       invalidatesTags: ['Step'],
@@ -60,7 +64,8 @@ export const loquiapi = createApi({
 export const {
   useGetFlowQuery,
   useGetStepQuery,
-	useGetFlowMapQuery,
+  useGetFlowMapQuery,
   useCreateStepMutation,
   useDeleteStepMutation,
+	useUpdateStepMutation,
 } = loquiapi;

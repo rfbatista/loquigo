@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"context"
-	"fmt"
 	"loquigo/engine/src/core/domain"
 	"loquigo/engine/src/infrastructure"
 	database "loquigo/engine/src/infrastructure/database/mongo"
@@ -50,7 +49,7 @@ func (u UserStatesRepo) Update(userState domain.UserState) error {
 }
 
 func (u UserStatesRepo) Create(userId string) (domain.UserState, error) {
-	fmt.Println("Criando UserState")
+
 	userState := domain.NewUserState(userId, "begin", "start")
 	_, err := u.collection.InsertOne(context.TODO(), userState)
 	if err != nil {

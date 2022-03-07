@@ -55,6 +55,6 @@ func (co ComponentController) Delete(c *gin.Context) {
 func (co ComponentController) GetComponents(c *gin.Context) {
 	flowID := c.Param("flow_id")
 	stepID := c.Param("step_id")
-	flow, _ := co.service.GetComponents(flowID, stepID)
+	flow, _ := co.service.FindByFlowIdAndStepId(flowID, stepID)
 	c.JSON(http.StatusOK, gin.H{"data": flow})
 }

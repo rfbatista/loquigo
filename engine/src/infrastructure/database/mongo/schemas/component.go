@@ -9,8 +9,10 @@ import (
 func NewComponentSchema(component templatepool.Component) (ComponentSchema, error) {
 	flow_id, _ := primitive.ObjectIDFromHex(component.FlowId)
 	step_id, _ := primitive.ObjectIDFromHex(component.StepId)
-	ID, _ := primitive.ObjectIDFromHex(component.ID)
-
+	ID, IDError := primitive.ObjectIDFromHex(component.ID)
+	if IDError != nil {
+		ID = primitive.NewObjectID()
+	}
 	return ComponentSchema{
 		ID:       ID,
 		Flow_id:  flow_id,

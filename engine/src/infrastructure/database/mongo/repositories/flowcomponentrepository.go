@@ -2,6 +2,8 @@ package repositories
 
 import (
 	"context"
+	"fmt"
+	"log"
 	"loquigo/engine/src/core/modules/templatepool"
 	database "loquigo/engine/src/infrastructure/database/mongo"
 	"loquigo/engine/src/infrastructure/database/mongo/schemas"
@@ -22,26 +24,30 @@ type ComponentRepository struct {
 }
 
 func (c ComponentRepository) FindByFlowAndStepId(flowId string, stepId string) ([]templatepool.Component, error) {
+	flowIDHex, _ := primitive.ObjectIDFromHex(flowId)
+	stepIDHex, _ := primitive.ObjectIDFromHex(stepId)
 	filter := bson.D{
-		primitive.E{Key: "flow_id", Value: flowId},
-		primitive.E{Key: "step_id", Value: stepId},
+		primitive.E{Key: "flow_id", Value: flowIDHex},
+		primitive.E{Key: "step_id", Value: stepIDHex},
 	}
-	projection := bson.D{
-		primitive.E{Key: "sequence", Value: 1},
-	}
+	projection := bson.D{{"sequence", 1}}
 	opts := options.Find().SetProjection(projection)
-	var schemas []schemas.ComponentSchema
-	cursor, err := c.collection.Find(context.TODO(), filter, opts)
+	cur, err := c.collection.Find(context.TODO(), filter, opts)
 	if err != nil {
 		return []templatepool.Component{}, err
 	}
-	defer cursor.Close(context.TODO())
-	if err := cursor.All(context.TODO(), &schemas); err != nil {
-		return []templatepool.Component{}, err
-	}
+	defer cur.Close(context.TODO())
 	var components = []templatepool.Component{}
-	for _, schema := range schemas {
-		components = append(components, schema.ToDomain())
+	for cur.Next(context.TODO()) {
+
+		// create a value into which the single document can be decoded
+		var elem schemas.ComponentSchema
+		err := cur.Decode(&elem)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(elem)
+		components = append(components, elem.ToDomain())
 	}
 	return components, nil
 }
@@ -58,14 +64,23 @@ func (c ComponentRepository) Create(component templatepool.Component) (templatep
 
 func (c ComponentRepository) Update(component templatepool.Component) (templatepool.Component, error) {
 	schema, _ := schemas.NewComponentSchema(component)
-	opts := options.Update().SetUpsert(false)
-	filter := bson.D{primitive.E{Key: "_id", Value: schema.ID}}
-	_, err := c.collection.UpdateOne(context.TODO(), filter, schema, opts)
+
+	opts := options.Update().SetUpsert(true)
+	filter := bson.M{"_id": schema.ID}
+	update := bson.D{{"$set", bson.M{
+		"flow_id":  schema.Flow_id,
+		"step_id":  schema.Step_id,
+		"data":     schema.Data,
+		"sequence": schema.Sequence},
+	}}
+	_, err := c.collection.UpdateOne(context.Background(), filter, update, opts)
 	if err != nil {
+
 		return templatepool.Component{}, err
 	}
 	return schema.ToDomain(), nil
 }
+
 func (c ComponentRepository) Delete(component templatepool.Component) (templatepool.Component, error) {
 	schema, _ := schemas.NewComponentSchema(component)
 	opts := options.Delete()

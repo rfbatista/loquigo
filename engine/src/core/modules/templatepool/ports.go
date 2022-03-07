@@ -24,8 +24,8 @@ type StepRepository interface {
 	Delete(step Step) (Step, error)
 }
 type ComponentRepository interface {
-	FindByFlowAndStepId(flowId string, stepId string) ([]Component, error)
-	Create(component Component) (Component, error)
-	Update(component Component) (Component, error)
-	Delete(component Component) (Component, error)
+	FindByFlowAndStepId(flowId string, stepId string) ([]IComponent, error)
+	Create(component IComponent) (IComponent, error)
+	Update(component IComponent) (IComponent, error)
+	Delete(component IComponent) (IComponent, error)
 }

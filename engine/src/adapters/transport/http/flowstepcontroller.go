@@ -1,6 +1,7 @@
 package adapters
 
 import (
+	adapterservices "loquigo/engine/src/adapters/services"
 	"loquigo/engine/src/core/modules/templatepool"
 	"net/http"
 
@@ -19,7 +20,7 @@ func (r HttpRouter) AddStepRoutes(rg *gin.RouterGroup, controller StepController
 	route := rg.Group("/step")
 
 	route.POST("/", controller.Create)
-	route.PUT("/", controller.Update)
+	route.PUT("/:step_id", controller.Update)
 	route.DELETE("/", controller.Delete)
 	route.GET("/flow/:flow_id", controller.FindByFlowId)
 }
@@ -35,12 +36,13 @@ func (s StepController) Create(c *gin.Context) {
 }
 
 func (s StepController) Update(c *gin.Context) {
-	var input templatepool.Step
+	var input adapterservices.Node
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	flow, _ := s.service.UpdateStep(input)
+	step := input.ToDomain()
+	flow, _ := s.service.UpdateStep(step)
 	c.JSON(http.StatusOK, gin.H{"data": flow})
 }
 

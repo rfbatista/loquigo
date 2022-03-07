@@ -1,6 +1,8 @@
 package adapterservices
 
-import "loquigo/engine/src/core/modules/templatepool"
+import (
+	"loquigo/engine/src/core/modules/templatepool"
+)
 
 type NodePosition struct {
 	X int `json:"x"`
@@ -12,10 +14,11 @@ type NodeHandler struct {
 }
 
 type NodeData struct {
-	ID         string                   `json:"id"`
-	Name       string                   `json:"name"`
-	Components []templatepool.Component `json:"components"`
-	Handlers   []NodeHandler            `json:"handlers"`
+	ID         string                    `json:"id"`
+	FlowID     string                    `json:"flowId"`
+	Name       string                    `json:"name"`
+	Components []templatepool.IComponent `json:"components"`
+	Handlers   []NodeHandler             `json:"handlers"`
 }
 
 type Node struct {
@@ -23,6 +26,12 @@ type Node struct {
 	Type     string       `json:"type"`
 	Data     NodeData     `json:"data"`
 	Position NodePosition `json:"position"`
+}
+
+func (n Node) ToDomain() templatepool.Step {
+	step := templatepool.NewStep(n.Data.ID, n.Data.FlowID, n.Data.Name)
+	step.Components = n.Data.Components
+	return step
 }
 
 type Connection struct {
@@ -61,8 +70,10 @@ func createNodeFromStep(step templatepool.Step, position NodePosition) Node {
 		Id:   step.ID,
 		Type: "step",
 		Data: NodeData{
-			ID:   step.ID,
-			Name: step.Name,
+			ID:         step.ID,
+			FlowID:     step.FlowId,
+			Name:       step.Name,
+			Components: step.Components,
 		},
 		Position: position,
 	}

@@ -14,7 +14,6 @@ func InitializeEvent(db mongo.MongoDB) (infra.Server, error) {
 	wire.Build(
 		FlowSet,
 		StepSet,
-		ComponentSet,
 		ChatSet,
 		FlowMapSet,
 		infra.NewServer)

@@ -103,12 +103,9 @@ var FlowSet = wire.NewSet(
 )
 
 var StepSet = wire.NewSet(
+	ComponentServiceSet,
 	StepServiceSet,
 	adapters.NewStepController,
-)
-
-var ComponentSet = wire.NewSet(
-	ComponentServiceSet,
 	adapters.NewComponentController,
 )
 
