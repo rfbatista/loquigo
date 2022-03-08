@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"context"
-	"loquigo/engine/src/core/modules/templatepool"
+	"loquigo/engine/src/core/modules/template/pool"
 	database "loquigo/engine/src/infrastructure/database/mongo"
 	"loquigo/engine/src/infrastructure/database/mongo/schemas"
 
@@ -21,7 +21,7 @@ type StepRepository struct {
 	collection mongo.Collection
 }
 
-func (s StepRepository) FindByFlowId(id string) ([]templatepool.Step, error) {
+func (s StepRepository) FindByFlowId(id string) ([]pool.Step, error) {
 	ID, _ := primitive.ObjectIDFromHex(id)
 	filter := bson.D{
 		primitive.E{Key: "flow_id", Value: ID},
@@ -31,20 +31,20 @@ func (s StepRepository) FindByFlowId(id string) ([]templatepool.Step, error) {
 	var schemas []schemas.StepSchema
 	cursor, err := s.collection.Find(context.TODO(), filter, opts)
 	if err != nil {
-		return []templatepool.Step{}, err
+		return []pool.Step{}, err
 	}
 	defer cursor.Close(context.TODO())
 	if err := cursor.All(context.TODO(), &schemas); err != nil {
-		return []templatepool.Step{}, err
+		return []pool.Step{}, err
 	}
-	var components = []templatepool.Step{}
+	var components = []pool.Step{}
 	for _, schema := range schemas {
 		components = append(components, schema.ToDomain())
 	}
 	return components, nil
 }
 
-func (s StepRepository) FindById(id string) (templatepool.Step, error) {
+func (s StepRepository) FindById(id string) (pool.Step, error) {
 	ID, _ := primitive.ObjectIDFromHex(id)
 	filter := bson.D{
 		primitive.E{Key: "_id", Value: ID},
@@ -54,39 +54,39 @@ func (s StepRepository) FindById(id string) (templatepool.Step, error) {
 	var schemas schemas.StepSchema
 	err := s.collection.FindOne(context.TODO(), filter, opts).Decode(&schemas)
 	if err != nil {
-		return templatepool.Step{}, err
+		return pool.Step{}, err
 	}
 	return schemas.ToDomain(), nil
 }
 
-func (s StepRepository) Create(step templatepool.Step) (templatepool.Step, error) {
+func (s StepRepository) Create(step pool.Step) (pool.Step, error) {
 	schema, _ := schemas.NewStepSchma(step)
 	schema.ID = primitive.NewObjectID()
 	_, err := s.collection.InsertOne(context.TODO(), schema)
 	if err != nil {
-		return templatepool.Step{}, err
+		return pool.Step{}, err
 	}
 	return schema.ToDomain(), nil
 }
 
-func (s StepRepository) Update(step templatepool.Step) (templatepool.Step, error) {
+func (s StepRepository) Update(step pool.Step) (pool.Step, error) {
 	schema, _ := schemas.NewStepSchma(step)
 	opts := options.Update().SetUpsert(false)
 	filter := bson.D{primitive.E{Key: "_id", Value: schema.ID}}
 	_, err := s.collection.UpdateOne(context.TODO(), filter, schema, opts)
 	if err != nil {
-		return templatepool.Step{}, err
+		return pool.Step{}, err
 	}
 	return schema.ToDomain(), nil
 }
 
-func (s StepRepository) Delete(step templatepool.Step) (templatepool.Step, error) {
+func (s StepRepository) Delete(step pool.Step) (pool.Step, error) {
 	schema, _ := schemas.NewStepSchma(step)
 	opts := options.Delete()
 	filter := bson.D{primitive.E{Key: "_id", Value: schema.ID}}
 	_, err := s.collection.DeleteOne(context.TODO(), filter, opts)
 	if err != nil {
-		return templatepool.Step{}, err
+		return pool.Step{}, err
 	}
 	return schema.ToDomain(), nil
 }

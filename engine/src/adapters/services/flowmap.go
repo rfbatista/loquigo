@@ -1,7 +1,7 @@
 package adapterservices
 
 import (
-	"loquigo/engine/src/core/modules/templatepool"
+	"loquigo/engine/src/core/modules/template/pool"
 )
 
 type NodePosition struct {
@@ -14,11 +14,11 @@ type NodeHandler struct {
 }
 
 type NodeData struct {
-	ID         string                    `json:"id"`
-	FlowID     string                    `json:"flowId"`
-	Name       string                    `json:"name"`
-	Components []templatepool.IComponent `json:"components"`
-	Handlers   []NodeHandler             `json:"handlers"`
+	ID         string           `json:"id"`
+	FlowID     string           `json:"flowId"`
+	Name       string           `json:"name"`
+	Components []pool.Component `json:"components"`
+	Handlers   []NodeHandler    `json:"handlers"`
 }
 
 type Node struct {
@@ -28,8 +28,8 @@ type Node struct {
 	Position NodePosition `json:"position"`
 }
 
-func (n Node) ToDomain() templatepool.Step {
-	step := templatepool.NewStep(n.Data.ID, n.Data.FlowID, n.Data.Name)
+func (n Node) ToDomain() pool.Step {
+	step := pool.NewStep(n.Data.ID, n.Data.FlowID, n.Data.Name)
 	step.Components = n.Data.Components
 	return step
 }
@@ -46,14 +46,14 @@ type Connection struct {
 type FlowMap struct {
 }
 
-func NewFlowMapService(flowService templatepool.FlowService, stepService templatepool.StepService, componentService templatepool.ComponentService) FlowMapService {
+func NewFlowMapService(flowService pool.FlowService, stepService pool.StepService, componentService pool.ComponentService) FlowMapService {
 	return FlowMapService{flowService: flowService, stepService: stepService, componentService: componentService}
 }
 
 type FlowMapService struct {
-	flowService      templatepool.FlowService
-	stepService      templatepool.StepService
-	componentService templatepool.ComponentService
+	flowService      pool.FlowService
+	stepService      pool.StepService
+	componentService pool.ComponentService
 }
 
 func (f FlowMapService) GetMapFromFlow(flowId string) []Node {
@@ -65,7 +65,7 @@ func (f FlowMapService) GetMapFromFlow(flowId string) []Node {
 	return nodes
 }
 
-func createNodeFromStep(step templatepool.Step, position NodePosition) Node {
+func createNodeFromStep(step pool.Step, position NodePosition) Node {
 	node := Node{
 		Id:   step.ID,
 		Type: "step",

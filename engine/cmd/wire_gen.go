@@ -9,9 +9,7 @@ package cmd
 import (
 	"loquigo/engine/src/adapters/services"
 	"loquigo/engine/src/adapters/transport/http"
-	"loquigo/engine/src/core/modules/dialogmanager"
-	"loquigo/engine/src/core/modules/eventmanager"
-	"loquigo/engine/src/core/modules/templatepool"
+	"loquigo/engine/src/core/modules/template/pool"
 	"loquigo/engine/src/infrastructure"
 	"loquigo/engine/src/infrastructure/database/mongo"
 	"loquigo/engine/src/infrastructure/database/mongo/repositories"
@@ -20,27 +18,17 @@ import (
 // Injectors from wire.go:
 
 func InitializeEvent(db mongo.MongoDB) (infrastructure.Server, error) {
-	httpClient := infrastructure.NewHttpClient()
-	sendMessageService := eventmanager.NewSendMessageService(httpClient)
-	userStatesRepo := repositories.NewUserStatestRepo(db)
-	templateRunnerService := templatepool.NewTemplatePoolService(userStatesRepo)
-	userContextRepository := repositories.NewUserContextRepo(db)
-	findContextService := dialogmanager.NewFindContextService(userContextRepository)
-	runDialogService := dialogmanager.NewRunDialogService(templateRunnerService, findContextService)
-	userRepository := repositories.NewUserRepository(db)
-	chatService := eventmanager.NewChatService(sendMessageService, runDialogService, userRepository)
-	chatController := adapters.NewChatController(chatService)
 	flowRepository := repositories.NewFlowRepository(db)
-	flowService := templatepool.NewFlowService(flowRepository)
+	flowService := pool.NewFlowService(flowRepository)
 	flowController := adapters.NewFlowController(flowService)
 	stepRepository := repositories.NewStepRepository(db)
 	componentRepository := repositories.NewComponentRepo(db)
-	componentService := templatepool.NewComponentService(componentRepository)
-	stepService := templatepool.NewStepService(stepRepository, componentService)
+	componentService := pool.NewComponentService(componentRepository)
+	stepService := pool.NewStepService(stepRepository, componentService)
 	stepController := adapters.NewStepController(stepService)
 	componentController := adapters.NewComponentController(componentService)
 	flowMapService := adapterservices.NewFlowMapService(flowService, stepService, componentService)
 	flowMapController := adapters.NewFlowMapController(flowMapService)
-	server := infrastructure.NewServer(chatController, flowController, stepController, componentController, flowMapController)
+	server := infrastructure.NewServer(flowController, stepController, componentController, flowMapController)
 	return server, nil
 }

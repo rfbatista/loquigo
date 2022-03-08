@@ -1,18 +1,18 @@
 package adapters
 
 import (
-	"loquigo/engine/src/core/modules/templatepool"
+	"loquigo/engine/src/core/modules/template/pool"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func NewFlowController(s templatepool.FlowService) FlowController {
+func NewFlowController(s pool.FlowService) FlowController {
 	return FlowController{flowService: s}
 }
 
 type FlowController struct {
-	flowService templatepool.FlowService
+	flowService pool.FlowService
 }
 
 func (r HttpRouter) AddFlowRoutes(rg *gin.RouterGroup, controller FlowController) {
@@ -25,7 +25,7 @@ func (r HttpRouter) AddFlowRoutes(rg *gin.RouterGroup, controller FlowController
 }
 
 func (f FlowController) CreateFlow(c *gin.Context) {
-	var input templatepool.Flow
+	var input pool.Flow
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -35,7 +35,7 @@ func (f FlowController) CreateFlow(c *gin.Context) {
 }
 
 func (f FlowController) UpdateFlow(c *gin.Context) {
-	var input templatepool.Flow
+	var input pool.Flow
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -45,7 +45,7 @@ func (f FlowController) UpdateFlow(c *gin.Context) {
 }
 
 func (f FlowController) DeleteFlow(c *gin.Context) {
-	var input templatepool.Flow
+	var input pool.Flow
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

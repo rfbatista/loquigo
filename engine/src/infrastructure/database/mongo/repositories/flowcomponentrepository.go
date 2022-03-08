@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"loquigo/engine/src/core/modules/templatepool"
+	"loquigo/engine/src/core/modules/template/pool"
 	database "loquigo/engine/src/infrastructure/database/mongo"
 	"loquigo/engine/src/infrastructure/database/mongo/schemas"
 
@@ -23,21 +23,15 @@ type ComponentRepository struct {
 	collection mongo.Collection
 }
 
-func (c ComponentRepository) FindByFlowAndStepId(flowId string, stepId string) ([]templatepool.Component, error) {
-	flowIDHex, _ := primitive.ObjectIDFromHex(flowId)
-	stepIDHex, _ := primitive.ObjectIDFromHex(stepId)
-	filter := bson.D{
-		primitive.E{Key: "flow_id", Value: flowIDHex},
-		primitive.E{Key: "step_id", Value: stepIDHex},
-	}
-	projection := bson.D{{"sequence", 1}}
-	opts := options.Find().SetProjection(projection)
+func (c ComponentRepository) FindByFlowAndStepId(flowId string, stepId string) ([]pool.Component, error) {
+	filter := bson.M{"flow_id": flowId, "step_id": stepId}
+	opts := options.Find()
 	cur, err := c.collection.Find(context.TODO(), filter, opts)
 	if err != nil {
-		return []templatepool.Component{}, err
+		return []pool.Component{}, err
 	}
 	defer cur.Close(context.TODO())
-	var components = []templatepool.Component{}
+	var components = []pool.Component{}
 	for cur.Next(context.TODO()) {
 
 		// create a value into which the single document can be decoded
@@ -52,42 +46,46 @@ func (c ComponentRepository) FindByFlowAndStepId(flowId string, stepId string) (
 	return components, nil
 }
 
-func (c ComponentRepository) Create(component templatepool.Component) (templatepool.Component, error) {
-	schema, _ := schemas.NewComponentSchema(component)
+func (c ComponentRepository) Create(Icomponent pool.Component) (pool.Component, error) {
+	schema, _ := schemas.NewComponentSchema(Icomponent)
 	schema.ID = primitive.NewObjectID()
 	_, err := c.collection.InsertOne(context.TODO(), schema)
 	if err != nil {
-		return templatepool.Component{}, err
+		return pool.Component{}, err
 	}
 	return schema.ToDomain(), nil
 }
 
-func (c ComponentRepository) Update(component templatepool.Component) (templatepool.Component, error) {
-	schema, _ := schemas.NewComponentSchema(component)
+func (c ComponentRepository) Update(Icomponent pool.Component) (pool.Component, error) {
+	schema, _ := schemas.NewComponentSchema(Icomponent)
 
 	opts := options.Update().SetUpsert(true)
 	filter := bson.M{"_id": schema.ID}
 	update := bson.D{{"$set", bson.M{
 		"flow_id":  schema.Flow_id,
 		"step_id":  schema.Step_id,
+		"type":     schema.Type,
 		"data":     schema.Data,
 		"sequence": schema.Sequence},
 	}}
 	_, err := c.collection.UpdateOne(context.Background(), filter, update, opts)
 	if err != nil {
 
-		return templatepool.Component{}, err
+		return pool.Component{}, err
 	}
 	return schema.ToDomain(), nil
 }
 
-func (c ComponentRepository) Delete(component templatepool.Component) (templatepool.Component, error) {
-	schema, _ := schemas.NewComponentSchema(component)
+func (c ComponentRepository) Delete(Icomponent pool.Component) (pool.Component, error) {
+	schema, _ := schemas.NewComponentSchema(Icomponent)
 	opts := options.Delete()
-	filter := bson.D{primitive.E{Key: "_id", Value: schema.ID}}
-	_, err := c.collection.DeleteOne(context.TODO(), filter, opts)
+	filter := bson.M{"_id": schema.ID}
+	result, err := c.collection.DeleteOne(context.TODO(), filter, opts)
+	if result.DeletedCount == 0 {
+		fmt.Println("Error deleting component")
+	}
 	if err != nil {
-		return templatepool.Component{}, err
+		return pool.Component{}, err
 	}
 	return schema.ToDomain(), nil
 }

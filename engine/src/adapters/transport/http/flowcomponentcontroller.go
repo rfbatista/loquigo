@@ -1,18 +1,18 @@
 package adapters
 
 import (
-	"loquigo/engine/src/core/modules/templatepool"
+	"loquigo/engine/src/core/modules/template/pool"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func NewComponentController(service templatepool.ComponentService) ComponentController {
+func NewComponentController(service pool.ComponentService) ComponentController {
 	return ComponentController{service: service}
 }
 
 type ComponentController struct {
-	service templatepool.ComponentService
+	service pool.ComponentService
 }
 
 func (r HttpRouter) AddComponentRoutes(rg *gin.RouterGroup, controller ComponentController) {
@@ -25,7 +25,7 @@ func (r HttpRouter) AddComponentRoutes(rg *gin.RouterGroup, controller Component
 }
 
 func (co ComponentController) Create(c *gin.Context) {
-	var input templatepool.Component
+	var input pool.Component
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -35,7 +35,7 @@ func (co ComponentController) Create(c *gin.Context) {
 }
 
 func (co ComponentController) Update(c *gin.Context) {
-	var input templatepool.Component
+	var input pool.Component
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -44,7 +44,7 @@ func (co ComponentController) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": flow})
 }
 func (co ComponentController) Delete(c *gin.Context) {
-	var input templatepool.Component
+	var input pool.Component
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

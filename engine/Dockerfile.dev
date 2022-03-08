@@ -1,8 +1,8 @@
 FROM golang
 WORKDIR /app
-RUN go get github.com/go-delve/delve/cmd/dlv
-EXPOSE 4000 40000
+RUN go install github.com/go-delve/delve/cmd/dlv
+EXPOSE 4000 2345
 COPY . .
 RUN go mod download
 RUN go build -gcflags="all=-N -l" -o /server
-CMD ["dlv", "--listen=:40000", "--headless=true", "--api-version=2", "--accept-multiclient", "exec", "/server"]
+CMD ["dlv", "--listen=:2345", "--headless=true", "--api-version=2", "--accept-multiclient", "exec", "/server"]

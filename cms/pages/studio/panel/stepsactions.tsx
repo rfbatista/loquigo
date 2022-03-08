@@ -1,14 +1,58 @@
 import { IconButton } from 'rsuite';
 import PlusRoundIcon from '@rsuite/icons/PlusRound';
 import ChatBubble from 'components/chatbuble';
-import { useUpdateStepMutation } from 'services/loquiapi';
+import {
+  useDeleteComponentMutation,
+  useGetStepByIdQuery,
+  useUpdateStepMutation,
+} from 'services/loquiapi';
+import React from 'react';
+
+const addComponent = (step, newComponent) => {
+  return step?.components?.length > 0
+    ? [
+        ...step.components,
+        {
+          flowId: step.flowId,
+          stepId: step.id,
+          type: newComponent.type,
+          sequence: step.components?.length,
+        },
+      ]
+    : [
+        {
+          flowId: step.flowId,
+          stepId: step.id,
+
+          sequence: 0,
+        },
+      ];
+};
 
 const StepActions = ({ step }) => {
-	let payload = step 
-  const [updateStep, { isLoading: isUpdating }] = useUpdateStepMutation({
-    fixedCacheKey: payload.id,
-  });
-	console.log(payload)
+  const { data, isError, isLoading, error } = useGetStepByIdQuery(step.id);
+  const [updateStep, { isLoading: isUpdating, isSuccess }] =
+    useUpdateStepMutation({
+      fixedCacheKey: step.id,
+    });
+  const [deleteStep] = useDeleteComponentMutation();
+  const addComponentInStep = (component) => {
+    updateStep({
+      ...data,
+      data: { ...data.data, components: addComponent(data, component) },
+    });
+  };
+  const removeComponent = (component) => {
+    deleteStep(component);
+  };
+  const list = data?.Components?.map((component, index) => (
+    <ChatBubble
+      key={index.toString()}
+      data={component}
+      remove={removeComponent}
+    />
+  ));
+
   return (
     <>
       <div
@@ -18,39 +62,17 @@ const StepActions = ({ step }) => {
         <h5 className='mb-3 text-base font-semibold text-gray-900 lg:text-xl dark:text-white'>
           Componentes
         </h5>
-        {!payload.data?.components ? (
-          <></>
-        ) : (
-          payload.data?.components?.map((component) => {
-            <ChatBubble data={component} />;
-          })
-        )}
+        {list}
         <ul className='w-48 text-sm font-medium text-gray-900 bg-whitex dark:text-white'>
           <li className='w-200 my-2'>
             <IconButton
               icon={<PlusRoundIcon />}
               onClick={() => {
-                const components = payload.data?.components
-                  ? [
-                      ...payload.data.components,
-                      {
-                        flowId: payload.data.flowId,
-                        stepId: payload.data.id,
-                        type: 'text',
-                        data: { text: '' },
-                        sequence: payload.components.length,
-                      },
-                    ]
-                  : [
-                      {
-                        flowId: payload.data.flowId,
-                        stepId: payload.data.id,
-                        type: 'text',
-                        data: { text: '' },
-                        sequence: 0,
-                      },
-                    ];
-                updateStep({...payload, data: {...payload.data, components}});
+                addComponentInStep({
+                  key: new Date().getTime(),
+                  type: 'text',
+                  data: { text: '' },
+                });
               }}
             >
               Adicionar Texto

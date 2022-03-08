@@ -1,12 +1,12 @@
 package schemas
 
 import (
-	"loquigo/engine/src/core/modules/templatepool"
+	"loquigo/engine/src/core/modules/template/pool"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func NewFlowSchema(flow templatepool.Flow) (FlowSchema, error) {
+func NewFlowSchema(flow pool.Flow) (FlowSchema, error) {
 	ID, _ := primitive.ObjectIDFromHex(flow.ID)
 	return FlowSchema{
 		ID:    ID,
@@ -21,6 +21,6 @@ type FlowSchema struct {
 	Name  string             `bson:"name"`
 }
 
-func (f FlowSchema) ToDomain() templatepool.Flow {
-	return templatepool.NewFlow(f.ID.Hex(), f.BotId, f.Name)
+func (f FlowSchema) ToDomain() pool.Flow {
+	return pool.NewFlow(f.ID.Hex(), f.BotId, f.Name)
 }

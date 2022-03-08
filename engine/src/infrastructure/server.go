@@ -9,13 +9,13 @@ import (
 )
 
 func NewServer(
-	c controller.ChatController,
+	// c controller.ChatController,
 	f controller.FlowController,
 	s controller.StepController,
 	co controller.ComponentController,
 	fo controller.FlowMapController) Server {
 	return Server{
-		ChatController:      c,
+		// ChatController:      c,
 		FlowController:      f,
 		StepController:      s,
 		ComponentController: co,
@@ -23,7 +23,7 @@ func NewServer(
 }
 
 type Server struct {
-	ChatController      controller.ChatController
+	// ChatController      controller.ChatController
 	FlowController      controller.FlowController
 	StepController      controller.StepController
 	ComponentController controller.ComponentController
@@ -38,7 +38,7 @@ func (s Server) Start() {
 	r.AddFlowRoutes(v1, s.FlowController)
 	r.AddStepRoutes(v1, s.StepController)
 	r.AddComponentRoutes(v1, s.ComponentController)
-	r.AddChatRoutes(v1, s.ChatController)
+	// r.AddChatRoutes(v1, s.ChatController)
 	r.AddFlowMapRoutes(v1, s.FlowMapController)
 	r.Router.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }

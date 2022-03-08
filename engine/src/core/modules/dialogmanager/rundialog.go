@@ -2,15 +2,15 @@ package dialogmanager
 
 import (
 	"loquigo/engine/src/core/domain"
-	"loquigo/engine/src/core/modules/templatepool"
+	"loquigo/engine/src/core/modules/template/runner"
 )
 
-func NewRunDialogService(template templatepool.TemplateRunnerService, dialogmanager FindContextService) RunDialogService {
+func NewRunDialogService(template runner.TemplateRunnerService, dialogmanager FindContextService) RunDialogService {
 	return RunDialogService{template: template, dialogmanager: dialogmanager}
 }
 
 type RunDialogService struct {
-	template      templatepool.TemplateRunnerService
+	template      runner.TemplateRunnerService
 	dialogmanager FindContextService
 }
 

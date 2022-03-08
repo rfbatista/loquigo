@@ -5,8 +5,7 @@ import (
 	adapters "loquigo/engine/src/adapters/transport/http"
 	"loquigo/engine/src/core/modules/dialogmanager"
 	"loquigo/engine/src/core/modules/eventmanager"
-	"loquigo/engine/src/core/modules/templatepool"
-	infra "loquigo/engine/src/infrastructure"
+	"loquigo/engine/src/core/modules/template/pool"
 	"loquigo/engine/src/infrastructure/database/mongo/repositories"
 
 	"github.com/google/wire"
@@ -21,10 +20,10 @@ var UserRepoSet = wire.NewSet(
 	wire.Bind(new(eventmanager.UserRepository), new(repositories.UserRepository)),
 )
 
-var UserStateRepoSet = wire.NewSet(
-	repositories.NewUserStatestRepo,
-	wire.Bind(new(templatepool.UserStateRepo), new(repositories.UserStatesRepo)),
-)
+// var UserStateRepoSet = wire.NewSet(
+// 	repositories.NewUserStatestRepo,
+// 	wire.Bind(new(pool.UserStateRepo), new(repositories.UserStatesRepo)),
+// )
 
 var UserContextSet = wire.NewSet(
 	repositories.NewUserContextRepo,
@@ -33,17 +32,17 @@ var UserContextSet = wire.NewSet(
 
 var FlowRepoSet = wire.NewSet(
 	repositories.NewFlowRepository,
-	wire.Bind(new(templatepool.FlowRepository), new(repositories.FlowRepository)),
+	wire.Bind(new(pool.FlowRepository), new(repositories.FlowRepository)),
 )
 
 var StepRepoSet = wire.NewSet(
 	repositories.NewStepRepository,
-	wire.Bind(new(templatepool.StepRepository), new(repositories.StepRepository)),
+	wire.Bind(new(pool.StepRepository), new(repositories.StepRepository)),
 )
 
 var ComponentRepoSet = wire.NewSet(
 	repositories.NewComponentRepo,
-	wire.Bind(new(templatepool.ComponentRepository), new(repositories.ComponentRepository)),
+	wire.Bind(new(pool.ComponentRepository), new(repositories.ComponentRepository)),
 )
 
 //*****************
@@ -55,34 +54,34 @@ var ContextSet = wire.NewSet(
 	dialogmanager.NewFindContextService,
 )
 
-var TemplatePoolSet = wire.NewSet(
-	UserStateRepoSet,
-	templatepool.NewTemplatePoolService,
-)
+// var TemplatePoolSet = wire.NewSet(
+// 	UserStateRepoSet,
+// 	pool.NewTemplatePoolService,
+// )
 
-var ChatServiceSet = wire.NewSet(
-	infra.NewHttpClient,
-	ContextSet,
-	TemplatePoolSet,
-	dialogmanager.NewRunDialogService,
-	eventmanager.NewSendMessageService,
-	UserRepoSet,
-	eventmanager.NewChatService,
-)
+// var ChatServiceSet = wire.NewSet(
+// 	infra.NewHttpClient,
+// 	ContextSet,
+// 	// TemplatePoolSet,
+// 	dialogmanager.NewRunDialogService,
+// 	eventmanager.NewSendMessageService,
+// 	UserRepoSet,
+// 	eventmanager.NewChatService,
+// )
 
 var FlowServiceSet = wire.NewSet(
 	FlowRepoSet,
-	templatepool.NewFlowService,
+	pool.NewFlowService,
 )
 
 var StepServiceSet = wire.NewSet(
 	StepRepoSet,
-	templatepool.NewStepService,
+	pool.NewStepService,
 )
 
 var ComponentServiceSet = wire.NewSet(
 	ComponentRepoSet,
-	templatepool.NewComponentService,
+	pool.NewComponentService,
 )
 
 var FlowMapServiceSet = wire.NewSet(
@@ -93,9 +92,9 @@ var FlowMapServiceSet = wire.NewSet(
 // Controllers
 //*****************
 
-var ChatSet = wire.NewSet(
-	ChatServiceSet,
-	adapters.NewChatController)
+// var ChatSet = wire.NewSet(
+// 	ChatServiceSet,
+// 	adapters.NewChatController)
 
 var FlowSet = wire.NewSet(
 	FlowServiceSet,

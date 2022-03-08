@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-
+import CloseOutlineIcon from '@rsuite/icons/CloseOutline';
 const Container = styled.div`
   p {
     // layout
@@ -36,16 +36,24 @@ const Container = styled.div`
   }
 `;
 
-const ChatBubble = ({data}) => {
+interface Props {
+  data: any;
+  remove?: (component: any) => void;
+}
+
+const ChatBubble: React.FC<Props> = ({ data, remove }) => {
   return (
-    <>
+    <div className='relative'>
+      <div className='absolute top-0 right-2 z-50'>
+        {remove ? <CloseOutlineIcon onClick={() => remove(data)} /> : <></>}
+      </div>
       <Container>
         <p>
           😔 Eu não te entendi. Envie a letra de uma das opções da lista para
           responder essa pergunta.{' '}
         </p>
       </Container>
-    </>
+    </div>
   );
 };
 
