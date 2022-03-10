@@ -31,3 +31,8 @@ func (c ComponentService) FindByFlowIdAndStepId(stepId string, flowId string) ([
 	fmt.Println(components)
 	return components, nil
 }
+
+func (c ComponentService) DeleteByBotId(stepID string) error {
+	_ = c.componentRepository.DeleteByBotID(stepID)
+	return nil
+}

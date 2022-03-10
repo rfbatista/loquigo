@@ -13,8 +13,9 @@ func NewComponentSchema(component pool.Component) (ComponentSchema, error) {
 	}
 	return ComponentSchema{
 		ID:       ID,
-		Flow_id:  component.FlowId,
-		Step_id:  component.StepId,
+		BotId:    component.BotId,
+		FlowId:   component.FlowId,
+		StepId:   component.StepId,
 		Type:     component.Type,
 		Data:     component.Data,
 		Sequence: component.Sequence,
@@ -23,8 +24,9 @@ func NewComponentSchema(component pool.Component) (ComponentSchema, error) {
 
 type ComponentSchema struct {
 	ID       primitive.ObjectID `bson:"_id" json:"id,omitempty"`
-	Flow_id  string             `bson:"flow_id"`
-	Step_id  string             `bson:"step_id"`
+	BotId    string             `bson:"bot_id"`
+	FlowId   string             `bson:"flow_id"`
+	StepId   string             `bson:"step_id"`
 	Type     string             `bson:"type"`
 	Data     pool.ComponentData `bson:"data"`
 	Sequence int                `bson:"sequence"`
@@ -33,8 +35,8 @@ type ComponentSchema struct {
 func (c ComponentSchema) ToDomain() pool.Component {
 	return pool.Component{
 		ID:       c.ID.Hex(),
-		FlowId:   c.Flow_id,
-		StepId:   c.Step_id,
+		FlowId:   c.FlowId,
+		StepId:   c.StepId,
 		Type:     c.Type,
 		Data:     c.Data,
 		Sequence: c.Sequence,

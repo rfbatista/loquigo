@@ -11,6 +11,7 @@ type GoTo struct {
 
 type Component struct {
 	ID       string        `json:"id"`
+	BotId    string        `json:"bot_id"`
 	FlowId   string        `json:"flowId"`
 	StepId   string        `json:"stepId"`
 	Type     string        `json:"type" `

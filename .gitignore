@@ -1,3 +1,5 @@
 go
 *.env
 .idea/
+editor
+*/**/node_modules

@@ -2,7 +2,10 @@ package repositories
 
 import (
 	"context"
+	"fmt"
+	"loquigo/engine/src/core/modules/components"
 	"loquigo/engine/src/core/modules/template/pool"
+	"loquigo/engine/src/core/modules/template/runner"
 	database "loquigo/engine/src/infrastructure/database/mongo"
 	"loquigo/engine/src/infrastructure/database/mongo/schemas"
 
@@ -61,7 +64,6 @@ func (s StepRepository) FindById(id string) (pool.Step, error) {
 
 func (s StepRepository) Create(step pool.Step) (pool.Step, error) {
 	schema, _ := schemas.NewStepSchma(step)
-	schema.ID = primitive.NewObjectID()
 	_, err := s.collection.InsertOne(context.TODO(), schema)
 	if err != nil {
 		return pool.Step{}, err
@@ -89,4 +91,47 @@ func (s StepRepository) Delete(step pool.Step) (pool.Step, error) {
 		return pool.Step{}, err
 	}
 	return schema.ToDomain(), nil
+}
+
+func (s StepRepository) DeleteByBotID(botId string) error {
+	opts := options.Delete()
+	filter := bson.M{"bot_id": bson.M{"$eq": botId}}
+	result, err := s.collection.DeleteMany(context.TODO(), filter, opts)
+	if result.DeletedCount == 0 {
+		fmt.Println("Error deleting component")
+	}
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c StepRepository) FindByIdAndFlowId(flowId string, stepId string) (pool.Step, error) {
+	filter := bson.D{
+		primitive.E{Key: "flow_id", Value: flowId},
+		primitive.E{Key: "id", Value: stepId},
+	}
+	projection := bson.D{}
+	opts := options.FindOne().SetProjection(projection)
+	var schema schemas.StepSchema
+	err := c.collection.FindOne(context.TODO(), filter, opts).Decode(&schema)
+	if err != nil {
+		return pool.Step{}, err
+	}
+	return schema.ToDomain(), nil
+}
+
+func (c StepRepository) FindByFlowIdAndStepId(flowId string, stepId string) (runner.RunnerStep, error) {
+	filter := bson.D{
+		primitive.E{Key: "flow_id", Value: flowId},
+		primitive.E{Key: "id", Value: stepId},
+	}
+	projection := bson.D{}
+	opts := options.FindOne().SetProjection(projection)
+	var schema []schemas.StepSchema
+	err := c.collection.FindOne(context.TODO(), filter, opts).Decode(&schema)
+	if err != nil {
+		return components.Step{}, err
+	}
+	return components.Step{}, nil
 }

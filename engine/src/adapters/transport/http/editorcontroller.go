@@ -1,33 +1,36 @@
 package adapters
 
 import (
-	"loquigo/engine/src/core/domain"
-	"loquigo/engine/src/core/modules/eventmanager"
+	adapterservices "loquigo/engine/src/adapters/services"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func NewEditorController(e eventmanager.ChatService) ChatController {
-	return ChatController{eventService: e}
+func NewEditorController(e adapterservices.EditorService) EditorController {
+	return EditorController{EditorService: e}
 }
 
-func (r HttpRouter) AddEditorRoutes(rg *gin.RouterGroup, controller ChatController) {
-	route := rg.Group("/chat")
+func (r HttpRouter) AddEditorRoutes(rg *gin.RouterGroup, controller EditorController) {
+	route := rg.Group("/editor")
 
-	route.POST("/", controller.PostMessage)
+	route.PUT("/", controller.UpdateBot)
 }
 
 type EditorController struct {
-	eventService eventmanager.ChatService
+	EditorService adapterservices.EditorService
 }
 
-func (chat ChatController) UpdateBot(c *gin.Context) {
-	var input domain.Event
+type Input struct {
+	Data string `json:"data"`
+}
+
+func (e EditorController) UpdateBot(c *gin.Context) {
+	var input Input
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	messages, _ := chat.eventService.Run(input)
-	c.JSON(http.StatusOK, gin.H{"data": messages})
+	response, _ := e.EditorService.UpdateBot(input.Data)
+	c.JSON(http.StatusOK, gin.H{"data": response})
 }

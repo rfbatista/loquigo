@@ -27,3 +27,8 @@ func (f FlowService) FindByBotId(botId string) ([]Flow, error) {
 	flows, _ := f.flowRepository.FindByBotId(botId)
 	return flows, nil
 }
+
+func (f FlowService) DeleteByBotID(botId string) error {
+	_ = f.flowRepository.DeleteByBotID(botId)
+	return nil
+}

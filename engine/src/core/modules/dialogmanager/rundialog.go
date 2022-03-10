@@ -5,17 +5,17 @@ import (
 	"loquigo/engine/src/core/modules/template/runner"
 )
 
-func NewRunDialogService(template runner.TemplateRunnerService, dialogmanager FindContextService) RunDialogService {
-	return RunDialogService{template: template, dialogmanager: dialogmanager}
+func NewRunDialogService(template runner.RunnerService, dialogmanager FindContextService) RunDialogService {
+	return RunDialogService{runnerService: template, dialogmanager: dialogmanager}
 }
 
 type RunDialogService struct {
-	template      runner.TemplateRunnerService
+	runnerService runner.RunnerService
 	dialogmanager FindContextService
 }
 
 func (r RunDialogService) Run(event domain.Event) ([]domain.Message, error) {
 	userContext, _ := r.dialogmanager.Run(event)
-	messages, _ := r.template.Run(event, userContext)
+	messages, _ := r.runnerService.Run(event, userContext)
 	return messages, nil
 }

@@ -5,6 +5,6 @@ import (
 	"loquigo/engine/src/core/modules/template/pool"
 )
 
-type IComponent interface {
+type RunnerComponent interface {
 	Run(userMess domain.Message, u domain.UserContext, botMessages []domain.Message) ([]domain.Message, *pool.Stop, *pool.GoTo)
 }

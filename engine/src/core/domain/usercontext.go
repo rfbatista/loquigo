@@ -1,10 +1,11 @@
 package domain
 
 type UserContext struct {
-	ID     string            `bson:"_id,omitempty"`
-	userId string            `bson:"user_id"`
-	botId  string            `bson:"bot_id"`
-	memory map[string]string `bson:"memory"`
+	ID     string
+	UserId string
+	BotId  string
+	User   User
+	Memory map[string]string
 }
 
 func NewUserContext() UserContext {
@@ -12,5 +13,5 @@ func NewUserContext() UserContext {
 }
 
 func (u UserContext) GetMemoryVariable(variable string) string {
-	return u.memory[variable]
+	return u.Memory[variable]
 }

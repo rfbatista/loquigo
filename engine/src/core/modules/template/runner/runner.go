@@ -2,78 +2,72 @@ package runner
 
 import (
 	"loquigo/engine/src/core/domain"
+	"loquigo/engine/src/core/modules/template/pool"
 )
 
-func NewRunnerInput(message domain.Message, context domain.UserContext, state domain.UserState) RunnerInput {
+func NewRunnerInput(message domain.Message, context domain.UserContext, state domain.State) RunnerInput {
 	return RunnerInput{message: message, context: context, state: state}
 }
 
 type RunnerInput struct {
+	user    domain.User
+	botId   string
 	message domain.Message
 	context domain.UserContext
-	state   domain.UserState
+	state   domain.State
 }
 
-func NewRunnerService() RunnerService {
-	return RunnerService{}
+func NewRunnerService(stepService RunnerStepService) Runner {
+	return Runner{runnerStepService: stepService}
 }
 
-type RunnerService struct {
-	// flow FlowHash
+type Runner struct {
+	runnerStepService RunnerStepService
 }
 
-// func (s RunnerService) Run(i RunnerInput) ([]domain.Message, domain.State) {
-// 	if i.state == (domain.UserState{}) {
-// 		i.state = domain.NewUserState("", "begin", "start")
-// 	}
-// 	var flowId string = i.state.FlowId
-// 	var stepId string = i.state.StepId
-// 	var goTo *GoTo
-// 	var stop *Stop
-// 	messages := []domain.Message{}
-// 	step := s.flow[flowId][stepId]
-// 	for outer := 0; outer < 30; outer++ {
-// 		messages, stop, goTo = s.RunFlow(step, i, messages)
-// 		if stop != nil {
-// 			return messages, domain.NewState(stop.FlowId, stop.StepId)
-// 		}
-// 		if goTo == nil {
-// 			break
-// 		}
-// 	}
-// 	return messages, domain.NewState(i.state.FlowId, i.state.StepId)
-// }
+func (r Runner) Run(i RunnerInput) ([]domain.Message, domain.State, error) {
+	var step RunnerStep
+	var goTo *pool.GoTo
+	var stop *pool.Stop
+	var botMessages []domain.Message
 
-// func (s RunnerService) RunFlow(startStep IStep, i RunnerInput, previous []domain.Message) ([]domain.Message, *Stop, *GoTo) {
-// 	currentStep := startStep
-// 	var changeFlow *GoTo
-// 	var stopFlow *Stop
-// 	var previousMessages []domain.Message = previous
-// 	if startStep == nil {
-// 		return []domain.Message{}, &Stop{FlowId: i.state.FlowId, StepId: i.state.StepId}, &GoTo{}
-// 	}
-// 	for circuitBreaker := 0; circuitBreaker < 30; circuitBreaker++ {
-// 		previousMessages, stopFlow, changeFlow = s.RunStep(currentStep, i, previousMessages)
-// 		if stopFlow != nil {
-// 			return previousMessages, stopFlow, changeFlow
-// 		}
-// 		if changeFlow == nil {
-// 			return previousMessages, stopFlow, changeFlow
-// 		}
-// 		currentStep = s.flow[changeFlow.FlowId][changeFlow.StepId]
-// 	}
-// 	return previousMessages, stopFlow, changeFlow
-// }
+	if (domain.State{}) == i.state {
+		return botMessages, domain.State{}, MissingState{UserId: i.user.ID}
+	}
+	step, err := r.FindStep(i.botId, i.state)
+	if err != nil {
+		return botMessages, domain.NewState(i.state.FlowId, i.state.StepId), err
+	}
 
-// func (s RunnerService) RunStep(step IStep, i RunnerInput, messages []domain.Message) ([]domain.Message, *Stop, *GoTo) {
-// 	if step == nil {
-// 		return []domain.Message{}, nil, nil
-// 	}
-// 	var changeFlow *GoTo
-// 	var stopFlow *Stop
-// 	var botMessages []domain.Message = messages
-// 	for _, component := range step(i.message, i.context, messages) {
-// 		botMessages, stopFlow, changeFlow = component.Run(i.message, i.context, botMessages)
-// 	}
-// 	return botMessages, stopFlow, changeFlow
-// }
+	for outer := 0; outer < 30; outer++ {
+		botMessages, stop, goTo = step.Run(i.message, i.context, botMessages)
+		if stop != nil {
+			return botMessages, domain.NewState(stop.FlowId, stop.StepId), nil
+		}
+		if goTo == nil {
+			return botMessages, domain.NewState(i.state.FlowId, i.state.StepId), nil
+		}
+		step, err = r.FindStep(i.botId, domain.NewState(goTo.FlowId, goTo.StepId))
+		if err != nil {
+			return botMessages, domain.NewState(i.state.FlowId, i.state.StepId), err
+		}
+	}
+	return botMessages, domain.NewState(i.state.FlowId, i.state.StepId), nil
+}
+
+func (r Runner) FindStep(botId string, state domain.State) (RunnerStep, error) {
+	step, _ := r.runnerStepService.FindByFlowIdAndStepId(state.FlowId, state.StepId)
+	if step != nil {
+		return step, nil
+	}
+	step, _ = r.runnerStepService.FindFlowBegin(state.FlowId)
+	if step != nil {
+		return step, nil
+	}
+	flowId, _ := r.runnerStepService.FindBotBegin(botId)
+	step, _ = r.runnerStepService.FindFlowBegin(flowId)
+	if step != nil {
+		return step, nil
+	}
+	return step, NoStepInBotError{BotId: botId}
+}

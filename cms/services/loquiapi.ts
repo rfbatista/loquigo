@@ -7,11 +7,15 @@ import { IStep } from 'types/step';
 export const FLOW_API_REDUCER_KEY = 'FLOW_API';
 export const loquiapi = createApi({
   reducerPath: FLOW_API_REDUCER_KEY,
-  tagTypes: ['Step'],
+  tagTypes: ['Step', 'Bot'],
   baseQuery: axiosBaseQuery({
     baseUrl: String(config.core.endpoint),
   }),
   endpoints: (builder) => ({
+		updateBot: builder.mutation({
+			query: (step) => ({ url: `/editor/`, method: 'PUT', data: {data: step} }),
+      invalidatesTags: ['Bot'],
+		}),
     getFlow: builder.query({
       query: (botId) => ({ url: `/flow/${botId}`, method: 'GET', data: null }),
     }),
@@ -88,4 +92,5 @@ export const {
   useCreateStepMutation,
   useDeleteStepMutation,
   useUpdateStepMutation,
+	useUpdateBotMutation,
 } = loquiapi;

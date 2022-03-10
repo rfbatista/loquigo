@@ -8,5 +8,6 @@ type Event struct {
 }
 
 type Bot struct {
-	ID string `json:"id"`
+	ID      string `json:"id" bson:"id"`
+	BeginId string `bson:"begin_id"`
 }

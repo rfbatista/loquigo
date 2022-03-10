@@ -12,10 +12,7 @@ import (
 
 func InitializeEvent(db mongo.MongoDB) (infra.Server, error) {
 	wire.Build(
-		FlowSet,
-		StepSet,
-		// ChatSet,
-		FlowMapSet,
+		ChatAndEditorServiceSet,
 		infra.NewServer)
 	return infra.Server{}, nil
 }

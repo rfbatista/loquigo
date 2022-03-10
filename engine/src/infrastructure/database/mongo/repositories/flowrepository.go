@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"fmt"
 	"loquigo/engine/src/core/modules/template/pool"
 	database "loquigo/engine/src/infrastructure/database/mongo"
 	"loquigo/engine/src/infrastructure/database/mongo/schemas"
@@ -47,7 +48,6 @@ func (f FlowRepository) FindByBotId(id string) ([]pool.Flow, error) {
 
 func (f FlowRepository) Create(flow pool.Flow) (pool.Flow, error) {
 	schema, _ := schemas.NewFlowSchema(flow)
-	schema.ID = primitive.NewObjectID()
 	_, err := f.collection.InsertOne(context.TODO(), schema)
 	if err != nil {
 		return pool.Flow{}, err
@@ -75,4 +75,30 @@ func (f FlowRepository) Delete(flow pool.Flow) (pool.Flow, error) {
 		return pool.Flow{}, err
 	}
 	return schema.ToDomain(), nil
+}
+
+func (c FlowRepository) DeleteByBotID(botId string) error {
+	opts := options.Delete()
+	filter := bson.M{"bot_id": bson.M{"$eq": botId}}
+	result, err := c.collection.DeleteMany(context.TODO(), filter, opts)
+	if result.DeletedCount == 0 {
+		fmt.Println("Error deleting component")
+	}
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (c FlowRepository) FindStepBeginIdFromFlow(flowId string) (string, error) {
+	filter := bson.D{
+		primitive.E{Key: "id", Value: flowId},
+	}
+	projection := bson.D{}
+	opts := options.FindOne().SetProjection(projection)
+	var schema schemas.FlowSchema
+	err := c.collection.FindOne(context.TODO(), filter, opts).Decode(&schema)
+	if err != nil {
+		return "", err
+	}
+	return schema.BeginId, nil
 }

@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"loquigo/engine/src/core/modules/components"
 	"loquigo/engine/src/core/modules/template/pool"
+	"loquigo/engine/src/core/modules/template/runner"
 	database "loquigo/engine/src/infrastructure/database/mongo"
 	"loquigo/engine/src/infrastructure/database/mongo/schemas"
 
@@ -62,8 +64,8 @@ func (c ComponentRepository) Update(Icomponent pool.Component) (pool.Component, 
 	opts := options.Update().SetUpsert(true)
 	filter := bson.M{"_id": schema.ID}
 	update := bson.D{{"$set", bson.M{
-		"flow_id":  schema.Flow_id,
-		"step_id":  schema.Step_id,
+		"flow_id":  schema.FlowId,
+		"step_id":  schema.StepId,
 		"type":     schema.Type,
 		"data":     schema.Data,
 		"sequence": schema.Sequence},
@@ -88,4 +90,38 @@ func (c ComponentRepository) Delete(Icomponent pool.Component) (pool.Component, 
 		return pool.Component{}, err
 	}
 	return schema.ToDomain(), nil
+}
+
+func (c ComponentRepository) DeleteByBotID(botId string) error {
+	opts := options.Delete()
+	filter := bson.M{"bot_id": bson.M{"$eq": botId}}
+	result, err := c.collection.DeleteMany(context.TODO(), filter, opts)
+	if result.DeletedCount == 0 {
+		fmt.Println("Error deleting component")
+	}
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c ComponentRepository) FindByFlowIdAndStepId(flowId string, stepId string) ([]runner.RunnerComponent, error) {
+	filter := bson.M{"flow_id": flowId, "step_id": stepId}
+	opts := options.Find()
+	cur, err := c.collection.Find(context.TODO(), filter, opts)
+	if err != nil {
+		return []runner.RunnerComponent{}, err
+	}
+	defer cur.Close(context.TODO())
+	var runnerComponents = []runner.RunnerComponent{}
+	for cur.Next(context.TODO()) {
+		// create a value into which the single document can be decoded
+		var elem schemas.ComponentSchema
+		err := cur.Decode(&elem)
+		if err != nil {
+			log.Fatal(err)
+		}
+		runnerComponents = append(runnerComponents, components.BuildRunnerComponent(elem.ToDomain()))
+	}
+	return runnerComponents, nil
 }

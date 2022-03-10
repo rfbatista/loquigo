@@ -9,10 +9,17 @@ type UserStateRepo interface {
 	Update(userState domain.UserState) error
 	Create(userId string) (domain.UserState, error)
 }
+type BotRepository interface {
+	FindBotBegin(botId string) (string, error)
+}
+
+type FlowRepository interface {
+	FindStepBeginIdFromFlow(flowId string) (string, error)
+}
+type StepRepository interface {
+	FindByFlowIdAndStepId(flowId string, stepId string) (RunnerStep, error)
+}
 
 type ComponentRepository interface {
-	FindByFlowAndStepId(flowId string, stepId string) ([]IComponent, error)
-	Create(component IComponent) (IComponent, error)
-	Update(component IComponent) (IComponent, error)
-	Delete(component IComponent) (IComponent, error)
+	FindByFlowIdAndStepId(flowId string, stepId string) ([]RunnerComponent, error)
 }
