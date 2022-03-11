@@ -21,5 +21,14 @@ func (c Component) Run(userMess domain.Message, u domain.UserContext, botMessage
 }
 
 func BuildRunnerComponent(c pool.Component) runner.RunnerComponent {
+
+	switch c.Type {
+	case "text":
+		return NewTextComponent(c)
+	case "goto":
+		return NewGotoComponent(c)
+	case "hold":
+		return NewHoldComponent(c)
+	}
 	return Component{}
 }

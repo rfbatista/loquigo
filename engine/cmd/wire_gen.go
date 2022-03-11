@@ -31,7 +31,7 @@ func InitializeEvent(db mongo.MongoDB) (infrastructure.Server, error) {
 	editorController := adapters.NewEditorController(editorService)
 	userStatesRepo := repositories.NewUserStatestRepo(db)
 	botRepository := repositories.NewBotRepository(db)
-	runnerStepService := runner.NewRunnerStepService(botRepository, flowRepository, stepRepository)
+	runnerStepService := runner.NewRunnerStepService(botRepository, flowRepository, stepRepository, componentRepository)
 	runnerRunner := runner.NewRunnerService(runnerStepService)
 	runnerService := runner.NewChatRunnerService(userStatesRepo, runnerStepService, runnerRunner)
 	userContextRepository := repositories.NewUserContextRepo(db)

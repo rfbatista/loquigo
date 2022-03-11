@@ -2,17 +2,11 @@ package schemas
 
 import (
 	"loquigo/engine/src/core/modules/template/pool"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func NewComponentSchema(component pool.Component) (ComponentSchema, error) {
-	ID, IDError := primitive.ObjectIDFromHex(component.ID)
-	if IDError != nil {
-		ID = primitive.NewObjectID()
-	}
 	return ComponentSchema{
-		ID:       ID,
+		ID:       component.ID,
 		BotId:    component.BotId,
 		FlowId:   component.FlowId,
 		StepId:   component.StepId,
@@ -23,7 +17,7 @@ func NewComponentSchema(component pool.Component) (ComponentSchema, error) {
 }
 
 type ComponentSchema struct {
-	ID       primitive.ObjectID `bson:"_id" json:"id,omitempty"`
+	ID       string             `bson:"id" json:"id,omitempty"`
 	BotId    string             `bson:"bot_id"`
 	FlowId   string             `bson:"flow_id"`
 	StepId   string             `bson:"step_id"`
@@ -34,7 +28,7 @@ type ComponentSchema struct {
 
 func (c ComponentSchema) ToDomain() pool.Component {
 	return pool.Component{
-		ID:       c.ID.Hex(),
+		ID:       c.ID,
 		FlowId:   c.FlowId,
 		StepId:   c.StepId,
 		Type:     c.Type,

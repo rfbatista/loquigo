@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"context"
-	"fmt"
 	"loquigo/engine/src/core/modules/template/pool"
 	database "loquigo/engine/src/infrastructure/database/mongo"
 	"loquigo/engine/src/infrastructure/database/mongo/schemas"
@@ -58,7 +57,7 @@ func (f FlowRepository) Create(flow pool.Flow) (pool.Flow, error) {
 func (f FlowRepository) Update(flow pool.Flow) (pool.Flow, error) {
 	schema, _ := schemas.NewFlowSchema(flow)
 	opts := options.Update().SetUpsert(false)
-	filter := bson.D{primitive.E{Key: "_id", Value: schema.ID}}
+	filter := bson.D{primitive.E{Key: "id", Value: schema.ID}}
 	_, err := f.collection.UpdateOne(context.TODO(), filter, schema, opts)
 	if err != nil {
 		return pool.Flow{}, err
@@ -69,7 +68,7 @@ func (f FlowRepository) Update(flow pool.Flow) (pool.Flow, error) {
 func (f FlowRepository) Delete(flow pool.Flow) (pool.Flow, error) {
 	schema, _ := schemas.NewFlowSchema(flow)
 	opts := options.Delete()
-	filter := bson.D{primitive.E{Key: "_id", Value: schema.ID}}
+	filter := bson.D{primitive.E{Key: "id", Value: schema.ID}}
 	_, err := f.collection.DeleteOne(context.TODO(), filter, opts)
 	if err != nil {
 		return pool.Flow{}, err
@@ -82,7 +81,7 @@ func (c FlowRepository) DeleteByBotID(botId string) error {
 	filter := bson.M{"bot_id": bson.M{"$eq": botId}}
 	result, err := c.collection.DeleteMany(context.TODO(), filter, opts)
 	if result.DeletedCount == 0 {
-		fmt.Println("Error deleting component")
+
 	}
 	if err != nil {
 		return err

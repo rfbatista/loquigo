@@ -15,6 +15,7 @@ func (r HttpRouter) AddEditorRoutes(rg *gin.RouterGroup, controller EditorContro
 	route := rg.Group("/editor")
 
 	route.PUT("/", controller.UpdateBot)
+	route.GET("/:botId", controller.FindBot)
 }
 
 type EditorController struct {
@@ -33,4 +34,10 @@ func (e EditorController) UpdateBot(c *gin.Context) {
 	}
 	response, _ := e.EditorService.UpdateBot(input.Data)
 	c.JSON(http.StatusOK, gin.H{"data": response})
+}
+
+func (e EditorController) FindBot(c *gin.Context) {
+	botID := c.Param("botId")
+	response, _ := e.EditorService.FindBot(botID)
+	c.YAML(http.StatusOK, response)
 }

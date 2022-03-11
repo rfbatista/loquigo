@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"context"
-	"fmt"
 	"loquigo/engine/src/core/modules/components"
 	"loquigo/engine/src/core/modules/template/pool"
 	"loquigo/engine/src/core/modules/template/runner"
@@ -25,9 +24,8 @@ type StepRepository struct {
 }
 
 func (s StepRepository) FindByFlowId(id string) ([]pool.Step, error) {
-	ID, _ := primitive.ObjectIDFromHex(id)
 	filter := bson.D{
-		primitive.E{Key: "flow_id", Value: ID},
+		primitive.E{Key: "flow_id", Value: id},
 	}
 	projection := bson.D{}
 	opts := options.Find().SetProjection(projection)
@@ -98,7 +96,7 @@ func (s StepRepository) DeleteByBotID(botId string) error {
 	filter := bson.M{"bot_id": bson.M{"$eq": botId}}
 	result, err := s.collection.DeleteMany(context.TODO(), filter, opts)
 	if result.DeletedCount == 0 {
-		fmt.Println("Error deleting component")
+
 	}
 	if err != nil {
 		return err

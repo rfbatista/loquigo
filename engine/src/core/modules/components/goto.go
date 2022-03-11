@@ -3,11 +3,15 @@ package components
 import (
 	"loquigo/engine/src/core/domain"
 	"loquigo/engine/src/core/modules/template/pool"
+	"loquigo/engine/src/core/modules/template/runner"
 )
 
+func NewGotoComponent(c pool.Component) runner.RunnerComponent {
+	return GotoComponent{Data: GoToComponentData{FlowId: c.Data.FlowId, StepId: c.Data.StepId}}
+}
+
 type GotoComponent struct {
-	Component
-	Data HoldComponentData
+	Data GoToComponentData
 }
 
 type GoToComponentData struct {

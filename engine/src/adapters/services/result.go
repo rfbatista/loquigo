@@ -1,3 +1,5 @@
 package adapterservices
 
-type Result struct{}
+type Result struct {
+	Data interface{}
+}

@@ -35,12 +35,14 @@ func (r Runner) Run(i RunnerInput) ([]domain.Message, domain.State, error) {
 		return botMessages, domain.State{}, MissingState{UserId: i.user.ID}
 	}
 	step, err := r.FindStep(i.botId, i.state)
+
 	if err != nil {
 		return botMessages, domain.NewState(i.state.FlowId, i.state.StepId), err
 	}
 
 	for outer := 0; outer < 30; outer++ {
 		botMessages, stop, goTo = step.Run(i.message, i.context, botMessages)
+
 		if stop != nil {
 			return botMessages, domain.NewState(stop.FlowId, stop.StepId), nil
 		}
@@ -57,6 +59,7 @@ func (r Runner) Run(i RunnerInput) ([]domain.Message, domain.State, error) {
 
 func (r Runner) FindStep(botId string, state domain.State) (RunnerStep, error) {
 	step, _ := r.runnerStepService.FindByFlowIdAndStepId(state.FlowId, state.StepId)
+
 	if step != nil {
 		return step, nil
 	}

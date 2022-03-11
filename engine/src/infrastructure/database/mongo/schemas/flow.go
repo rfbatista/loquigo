@@ -6,9 +6,10 @@ import (
 
 func NewFlowSchema(flow pool.Flow) (FlowSchema, error) {
 	return FlowSchema{
-		ID:    flow.ID,
-		BotId: flow.BotId,
-		Name:  flow.Name,
+		ID:      flow.ID,
+		BotId:   flow.BotId,
+		BeginId: flow.BeginId,
+		Name:    flow.Name,
 	}, nil
 }
 

@@ -24,6 +24,7 @@ func (t RunnerService) Run(event domain.Event, context domain.UserContext) ([]do
 		state:   state,
 	}
 	messages, newState, _ := t.runner.Run(input)
+
 	t.userStateRepo.Update(domain.UserState{UserId: event.User.ID, FlowId: newState.FlowId, StepId: newState.StepId})
 	return messages, nil
 }

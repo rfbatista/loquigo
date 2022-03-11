@@ -18,7 +18,7 @@ const axiosBaseQuery =
     try {
       const result = await axios({ url: baseUrl + url, method, data })
 			// console.log(`url: ${url} \n method: ${method} \n data: ${data} \n response: ${JSON.stringify(result.data)}`)
-      return { data: result.data.data }
+      return { data: result.data }
     } catch (axiosError) {
       let err = axiosError as AxiosError
       return {

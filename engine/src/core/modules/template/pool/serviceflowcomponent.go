@@ -1,7 +1,5 @@
 package pool
 
-import "fmt"
-
 func NewComponentService(repo ComponentRepository) ComponentService {
 	return ComponentService{componentRepository: repo}
 }
@@ -28,7 +26,7 @@ func (c ComponentService) DeleteComponent(component Component) (Component, error
 
 func (c ComponentService) FindByFlowIdAndStepId(stepId string, flowId string) ([]Component, error) {
 	components, _ := c.componentRepository.FindByFlowAndStepId(flowId, stepId)
-	fmt.Println(components)
+
 	return components, nil
 }
 

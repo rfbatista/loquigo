@@ -42,7 +42,7 @@ services:
       - MONGO_PORT=27017
       - MONGO_HOST=loqui-mongodb
     volumes:
-     - .:/app:rw,delegated
+     - ./engine:/app:rw,delegated
     networks:
       - loqui-network-dev
     depends_on:

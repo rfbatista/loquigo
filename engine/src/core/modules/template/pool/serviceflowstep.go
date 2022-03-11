@@ -1,7 +1,5 @@
 package pool
 
-import "fmt"
-
 func NewStepService(repo StepRepository, service ComponentService) StepService {
 	return StepService{stepRepo: repo, componentService: service}
 }
@@ -12,8 +10,7 @@ type StepService struct {
 }
 
 func (s StepService) NewStep(step Step) (Step, error) {
-	fmt.Println("Creating step")
-	fmt.Println(step)
+
 	stepCreated, _ := s.stepRepo.Create(step)
 	return stepCreated, nil
 }
@@ -36,6 +33,7 @@ func (s StepService) DeleteStep(step Step) (Step, error) {
 
 func (s StepService) FindByFlowId(flowId string) ([]Step, error) {
 	steps, _ := s.stepRepo.FindByFlowId(flowId)
+
 	var stepsWithComponents []Step
 	for _, step := range steps {
 		components, _ := s.componentService.FindByFlowIdAndStepId(step.ID, step.FlowId)

@@ -6,11 +6,16 @@ import StepActions from './panel/stepsactions';
 import Button from 'rsuite/Button';
 import { Sidebar, Sidenav } from 'rsuite';
 
-const Panel = ({ updateBot }) => {
+const Panel = ({ updateBot, isLoading }) => {
   return (
     <>
       <div className='grid place-items-center'>
-        <Button onClick={updateBot} className='bg-blue-600' appearance='primary'>
+        <Button
+          onClick={updateBot}
+          loading={isLoading}
+          className='bg-blue-600'
+          appearance='primary'
+        >
           Atualizar Bot
         </Button>
       </div>

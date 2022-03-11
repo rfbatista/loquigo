@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"loquigo/engine/src/core/modules/components"
 	"loquigo/engine/src/core/modules/template/pool"
@@ -11,7 +10,6 @@ import (
 	"loquigo/engine/src/infrastructure/database/mongo/schemas"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -42,7 +40,7 @@ func (c ComponentRepository) FindByFlowAndStepId(flowId string, stepId string) (
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println(elem)
+
 		components = append(components, elem.ToDomain())
 	}
 	return components, nil
@@ -50,7 +48,6 @@ func (c ComponentRepository) FindByFlowAndStepId(flowId string, stepId string) (
 
 func (c ComponentRepository) Create(Icomponent pool.Component) (pool.Component, error) {
 	schema, _ := schemas.NewComponentSchema(Icomponent)
-	schema.ID = primitive.NewObjectID()
 	_, err := c.collection.InsertOne(context.TODO(), schema)
 	if err != nil {
 		return pool.Component{}, err
@@ -84,7 +81,7 @@ func (c ComponentRepository) Delete(Icomponent pool.Component) (pool.Component, 
 	filter := bson.M{"_id": schema.ID}
 	result, err := c.collection.DeleteOne(context.TODO(), filter, opts)
 	if result.DeletedCount == 0 {
-		fmt.Println("Error deleting component")
+
 	}
 	if err != nil {
 		return pool.Component{}, err
@@ -97,7 +94,7 @@ func (c ComponentRepository) DeleteByBotID(botId string) error {
 	filter := bson.M{"bot_id": bson.M{"$eq": botId}}
 	result, err := c.collection.DeleteMany(context.TODO(), filter, opts)
 	if result.DeletedCount == 0 {
-		fmt.Println("Error deleting component")
+
 	}
 	if err != nil {
 		return err
@@ -121,7 +118,9 @@ func (c ComponentRepository) FindByFlowIdAndStepId(flowId string, stepId string)
 		if err != nil {
 			log.Fatal(err)
 		}
+
 		runnerComponents = append(runnerComponents, components.BuildRunnerComponent(elem.ToDomain()))
 	}
+
 	return runnerComponents, nil
 }
