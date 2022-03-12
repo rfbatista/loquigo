@@ -7,6 +7,10 @@ import {
   Loader,
   toaster,
   Message,
+  Navbar,
+  Nav,
+  Dropdown,
+  FlexboxGrid,
 } from 'rsuite';
 import dynamic from 'next/dynamic';
 import Panel from './panel';
@@ -29,35 +33,53 @@ const YamlEditor = ({ data }) => {
 
   return (
     <>
-      <Container className='my-5'>
-        <Panel updateBot={send} isLoading={isUpdating} />
-      </Container>
-      <MonacoEditor
-        editorDidMount={() => {
-          /* @ts-ignore */
-          window.MonacoEnvironment.getWorkerUrl = (
-            _moduleId: string,
-            label: string
-          ) => {
-            if (label === 'json') return '_next/static/json.worker.js';
-            if (label === 'css') return '_next/static/css.worker.js';
-            if (label === 'html') return '_next/static/html.worker.js';
-            if (label === 'yaml') return '_next/static/yaml.worker.js';
-            if (label === 'typescript' || label === 'javascript')
-              return '_next/static/ts.worker.js';
-            return '_next/static/editor.worker.js';
-          };
-        }}
-        language='yaml'
-        theme='vs-dark'
-        value={postBody}
-        options={{
-          minimap: {
-            enabled: false,
-          },
-        }}
-        onChange={setPostBody}
-      />
+      <Header className='w-full'>
+        <Navbar>
+          <Nav>
+            <Nav.Item>
+              <Panel updateBot={send} isLoading={isUpdating} />
+            </Nav.Item>
+          </Nav>
+        </Navbar>
+      </Header>
+      <Content className='w-full h-full'>
+        <FlexboxGrid className='h-full'>
+          <FlexboxGrid.Item className='h-full' colspan={12}>
+            <Container
+              className={'h-full w-full'}
+              style={{ maxWidth: '1000px', minWidth: '400px' }}
+            >
+              <MonacoEditor
+                editorDidMount={() => {
+                  /* @ts-ignore */
+                  window.MonacoEnvironment.getWorkerUrl = (
+                    _moduleId: string,
+                    label: string
+                  ) => {
+                    if (label === 'json') return '_next/static/json.worker.js';
+                    if (label === 'css') return '_next/static/css.worker.js';
+                    if (label === 'html') return '_next/static/html.worker.js';
+                    if (label === 'yaml') return '_next/static/yaml.worker.js';
+                    if (label === 'typescript' || label === 'javascript')
+                      return '_next/static/ts.worker.js';
+                    return '_next/static/editor.worker.js';
+                  };
+                }}
+                language='yaml'
+                theme='vs-dark'
+                value={postBody}
+                options={{
+                  minimap: {
+                    enabled: false,
+                  },
+                }}
+                onChange={setPostBody}
+              />
+            </Container>
+          </FlexboxGrid.Item>
+          <FlexboxGrid.Item colspan={12}></FlexboxGrid.Item>
+        </FlexboxGrid>
+      </Content>
     </>
   );
 };
@@ -69,8 +91,8 @@ const Studio = () => {
   return (
     <div className='grid place-items-center h-screen'>
       <Container
-        className='place-items-center w-full'
-        style={{ height: '100vh', maxWidth: '1000px', minWidth: '400px' }}
+        className='place-items-center w-full h-full'
+        style={{ height: '100vh' }}
       >
         <YamlEditor data={data} />
       </Container>
