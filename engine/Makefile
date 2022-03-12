@@ -8,3 +8,5 @@ build:
 	docker-compose up --build
 dev:
 	docker-compose up
+debug:
+	docker-compose -f docker-compose.debug.yaml up --build

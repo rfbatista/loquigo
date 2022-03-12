@@ -12,7 +12,7 @@ services:
     container_name: loquigo-mongodb
     image: mongo:4.2
     restart: always
-    command: mongod --quiet --logpath /dev/null 
+    command: mongod --quiet --logpath /dev/null
     ports:
       - 4001:27017
     environment:
@@ -27,7 +27,7 @@ services:
   loquigo-api:
     build:
       context: .
-      dockerfile: ./Dockerfile.dev
+      dockerfile: ./Dockerfile.debug
     container_name: loquigo-api
     ports:
       - 4000:4000

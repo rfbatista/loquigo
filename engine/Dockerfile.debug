@@ -1,8 +1,19 @@
-FROM golang
+FROM golang:latest
 WORKDIR /app
+
+# Install NPM and NODE
+RUN cd /tmp
+RUN apt-get install python3
+RUN whereis python3
+RUN ln -s /usr/bin/python3 /usr/bin/python
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
+RUN apt-get install -y nodejs
+
 RUN go get github.com/go-delve/delve/cmd/dlv
 EXPOSE 4000 2345
 COPY . .
-RUN go mod download
-RUN go build -gcflags="all=-N -l" -o /server
-CMD ["dlv", "--listen=:2345", "--headless=true", "--api-version=2", "--accept-multiclient", "exec", "/server"]
+RUN go get ./
+RUN go get github.com/githubnemo/CompileDaemon
+# RUN go build -gcflags="all=-N -l" -o /server
+RUN npm i -g nodemon
+CMD nodemon -e go --signal SIGTERM --exec "'go' build -gcflags='all=-N -l' -o /server && dlv --listen=:2345 --headless=true --api-version=2 --accept-multiclient exec /server"
