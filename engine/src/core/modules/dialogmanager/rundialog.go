@@ -16,6 +16,9 @@ type RunDialogService struct {
 
 func (r RunDialogService) Run(event domain.Event) ([]domain.Message, error) {
 	userContext, _ := r.dialogmanager.Run(event)
-	messages, _ := r.runnerService.Run(event, userContext)
+	messages, err := r.runnerService.Run(event, userContext)
+	if err != nil {
+		return messages, err
+	}
 	return messages, nil
 }

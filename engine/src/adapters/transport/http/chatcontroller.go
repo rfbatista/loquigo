@@ -29,6 +29,10 @@ func (chat ChatController) PostMessage(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	messages, _ := chat.eventService.Run(input)
-	c.JSON(http.StatusOK, gin.H{"data": messages})
+	messages, err := chat.eventService.Run(input)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"data": err.Error()})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"data": messages})
+	}
 }

@@ -119,7 +119,7 @@ func (c StepRepository) FindByIdAndFlowId(flowId string, stepId string) (pool.St
 	return schema.ToDomain(), nil
 }
 
-func (c StepRepository) FindByFlowIdAndStepId(flowId string, stepId string) (runner.RunnerStep, error) {
+func (c StepRepository) FindByFlowIdAndStepId(botId string, flowId string, stepId string) (runner.RunnerStep, error) {
 	filter := bson.D{
 		primitive.E{Key: "flow_id", Value: flowId},
 		primitive.E{Key: "id", Value: stepId},

@@ -31,7 +31,10 @@ func (c ChatService) Run(e domain.Event) ([]domain.Message, error) {
 
 	c.userRepo.FindUserOrCreate(e.User.ExternalId)
 
-	messages, _ := c.dm.Run(e)
+	messages, err := c.dm.Run(e)
+	if err != nil {
+		return messages, err
+	}
 	// c.sender.Send(messages)
 
 	return messages, nil

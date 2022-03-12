@@ -31,3 +31,11 @@ func (s Step) Run(message domain.Message, context domain.UserContext, messages [
 func (s Step) AddComponents(components []runner.RunnerComponent) (runner.RunnerStep, error) {
 	return Step{Components: components}, nil
 }
+
+func (s Step) IsValid() bool {
+	if len(s.Components) > 0 {
+		return true
+	} else {
+		return false
+	}
+}

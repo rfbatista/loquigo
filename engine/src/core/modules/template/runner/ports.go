@@ -14,12 +14,12 @@ type BotRepository interface {
 }
 
 type FlowRepository interface {
-	FindStepBeginIdFromFlow(flowId string) (string, error)
+	FindStepBeginIdFromFlow(botId string, flowId string) (string, error)
 }
 type StepRepository interface {
-	FindByFlowIdAndStepId(flowId string, stepId string) (RunnerStep, error)
+	FindByFlowIdAndStepId(botId string, flowId string, stepId string) (RunnerStep, error)
 }
 
 type ComponentRepository interface {
-	FindByFlowIdAndStepId(flowId string, stepId string) ([]RunnerComponent, error)
+	FindByFlowIdAndStepId(botID string, flowId string, stepId string) ([]RunnerComponent, error)
 }

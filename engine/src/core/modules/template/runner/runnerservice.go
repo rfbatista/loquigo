@@ -17,13 +17,16 @@ type RunnerService struct {
 func (t RunnerService) Run(event domain.Event, context domain.UserContext) ([]domain.Message, error) {
 	state, _ := t.FindUserState(event.Bot.ID, event.User)
 	input := RunnerInput{
-		user:    context.User,
-		botId:   context.BotId,
-		message: event.Message,
-		context: context,
-		state:   state,
+		User:    context.User,
+		BotId:   event.Bot.ID,
+		Message: event.Message,
+		Context: context,
+		State:   state,
 	}
-	messages, newState, _ := t.runner.Run(input)
+	messages, newState, err := t.runner.Run(input)
+	if err != nil {
+		return messages, err
+	}
 
 	t.userStateRepo.Update(domain.UserState{UserId: event.User.ID, FlowId: newState.FlowId, StepId: newState.StepId})
 	return messages, nil

@@ -88,7 +88,7 @@ func (c FlowRepository) DeleteByBotID(botId string) error {
 	}
 	return nil
 }
-func (c FlowRepository) FindStepBeginIdFromFlow(flowId string) (string, error) {
+func (c FlowRepository) FindStepBeginIdFromFlow(botId string, flowId string) (string, error) {
 	filter := bson.D{
 		primitive.E{Key: "id", Value: flowId},
 	}

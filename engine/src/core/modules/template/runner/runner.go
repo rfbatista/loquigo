@@ -6,15 +6,15 @@ import (
 )
 
 func NewRunnerInput(message domain.Message, context domain.UserContext, state domain.State) RunnerInput {
-	return RunnerInput{message: message, context: context, state: state}
+	return RunnerInput{Message: message, Context: context, State: state}
 }
 
 type RunnerInput struct {
-	user    domain.User
-	botId   string
-	message domain.Message
-	context domain.UserContext
-	state   domain.State
+	User    domain.User
+	BotId   string
+	Message domain.Message
+	Context domain.UserContext
+	State   domain.State
 }
 
 func NewRunnerService(stepService RunnerStepService) Runner {
@@ -31,44 +31,56 @@ func (r Runner) Run(i RunnerInput) ([]domain.Message, domain.State, error) {
 	var stop *pool.Stop
 	var botMessages []domain.Message
 
-	if (domain.State{}) == i.state {
-		return botMessages, domain.State{}, MissingState{UserId: i.user.ID}
+	if (domain.State{}) == i.State {
+		return botMessages, domain.State{}, MissingState{UserId: i.User.ID}
 	}
-	step, err := r.FindStep(i.botId, i.state)
-
+	step, err := r.FindStep(i.BotId, i.State)
 	if err != nil {
-		return botMessages, domain.NewState(i.state.FlowId, i.state.StepId), err
+		return botMessages, i.State, err
+	}
+	if err != nil {
+		return botMessages, domain.NewState(i.State.FlowId, i.State.StepId), err
 	}
 
 	for outer := 0; outer < 30; outer++ {
-		botMessages, stop, goTo = step.Run(i.message, i.context, botMessages)
-
+		botMessages, stop, goTo = step.Run(i.Message, i.Context, botMessages)
 		if stop != nil {
 			return botMessages, domain.NewState(stop.FlowId, stop.StepId), nil
 		}
 		if goTo == nil {
-			return botMessages, domain.NewState(i.state.FlowId, i.state.StepId), nil
+			return botMessages, domain.NewState(i.State.FlowId, i.State.StepId), nil
 		}
-		step, err = r.FindStep(i.botId, domain.NewState(goTo.FlowId, goTo.StepId))
+		step, err = r.FindStep(i.BotId, domain.NewState(goTo.FlowId, goTo.StepId))
 		if err != nil {
-			return botMessages, domain.NewState(i.state.FlowId, i.state.StepId), err
+			return botMessages, domain.NewState(i.State.FlowId, i.State.StepId), err
 		}
 	}
-	return botMessages, domain.NewState(i.state.FlowId, i.state.StepId), nil
+	return botMessages, domain.NewState(i.State.FlowId, i.State.StepId), nil
 }
 
 func (r Runner) FindStep(botId string, state domain.State) (RunnerStep, error) {
-	step, _ := r.runnerStepService.FindByFlowIdAndStepId(state.FlowId, state.StepId)
-
+	step, err := r.runnerStepService.FindByFlowIdAndStepId(botId, state.FlowId, state.StepId)
+	if err != nil {
+		return step, err
+	}
 	if step != nil {
 		return step, nil
 	}
-	step, _ = r.runnerStepService.FindFlowBegin(state.FlowId)
+	step, err = r.runnerStepService.FindFlowBegin(botId, state.FlowId)
+	if err != nil {
+		return step, err
+	}
 	if step != nil {
 		return step, nil
 	}
-	flowId, _ := r.runnerStepService.FindBotBegin(botId)
-	step, _ = r.runnerStepService.FindFlowBegin(flowId)
+	flowId, err := r.runnerStepService.FindBotBegin(botId)
+	if err != nil {
+		return step, err
+	}
+	step, err = r.runnerStepService.FindFlowBegin(botId, flowId)
+	if err != nil {
+		return step, err
+	}
 	if step != nil {
 		return step, nil
 	}

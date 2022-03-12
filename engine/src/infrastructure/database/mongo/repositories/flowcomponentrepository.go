@@ -102,7 +102,7 @@ func (c ComponentRepository) DeleteByBotID(botId string) error {
 	return nil
 }
 
-func (c ComponentRepository) FindByFlowIdAndStepId(flowId string, stepId string) ([]runner.RunnerComponent, error) {
+func (c ComponentRepository) FindByFlowIdAndStepId(botId string, flowId string, stepId string) ([]runner.RunnerComponent, error) {
 	filter := bson.M{"flow_id": flowId, "step_id": stepId}
 	opts := options.Find()
 	cur, err := c.collection.Find(context.TODO(), filter, opts)
