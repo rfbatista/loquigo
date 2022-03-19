@@ -2,8 +2,8 @@ package main
 
 import (
 	"loquigo/engine/cmd"
-	"loquigo/engine/src/infrastructure"
-	"loquigo/engine/src/infrastructure/database/mongo"
+	"loquigo/engine/pkg/infrastructure"
+	"loquigo/engine/pkg/infrastructure/database/mongo"
 )
 
 func main() {

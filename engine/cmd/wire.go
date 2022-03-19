@@ -4,8 +4,8 @@
 package cmd
 
 import (
-	infra "loquigo/engine/src/infrastructure"
-	"loquigo/engine/src/infrastructure/database/mongo"
+	infra "loquigo/engine/pkg/infrastructure"
+	"loquigo/engine/pkg/infrastructure/database/mongo"
 
 	"github.com/google/wire"
 )

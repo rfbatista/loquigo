@@ -7,17 +7,17 @@
 package cmd
 
 import (
-	"loquigo/engine/src/adapters/services/editor"
-	"loquigo/engine/src/adapters/transport/http"
-	"loquigo/engine/src/core/services/bot"
-	"loquigo/engine/src/core/services/components"
-	"loquigo/engine/src/core/services/dialogmanager"
-	"loquigo/engine/src/core/services/eventmanager"
-	"loquigo/engine/src/core/services/nodes"
-	"loquigo/engine/src/core/services/runner"
-	"loquigo/engine/src/infrastructure"
-	"loquigo/engine/src/infrastructure/database/mongo"
-	"loquigo/engine/src/infrastructure/database/mongo/repositories"
+	"loquigo/engine/pkg/adapters/services/editor"
+	"loquigo/engine/pkg/adapters/transport/http"
+	"loquigo/engine/pkg/core/services/bot"
+	"loquigo/engine/pkg/core/services/components"
+	"loquigo/engine/pkg/core/services/dialogmanager"
+	"loquigo/engine/pkg/core/services/eventmanager"
+	"loquigo/engine/pkg/core/services/nodes"
+	"loquigo/engine/pkg/core/services/runner"
+	"loquigo/engine/pkg/infrastructure"
+	"loquigo/engine/pkg/infrastructure/database/mongo"
+	"loquigo/engine/pkg/infrastructure/database/mongo/repositories"
 )
 
 // Injectors from wire.go:
