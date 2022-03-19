@@ -7,13 +7,20 @@ import { IStep } from 'types/step';
 export const FLOW_API_REDUCER_KEY = 'FLOW_API';
 export const loquiapi = createApi({
   reducerPath: FLOW_API_REDUCER_KEY,
-  tagTypes: ['Step'],
+  tagTypes: ['Step', 'Bot'],
   baseQuery: axiosBaseQuery({
     baseUrl: String(config.core.endpoint),
   }),
   endpoints: (builder) => ({
+		updateBot: builder.mutation({
+			query: (step) => ({ url: `/editor/`, method: 'PUT', data: {data: step} }),
+      invalidatesTags: ['Bot'],
+		}),
     getFlow: builder.query({
       query: (botId) => ({ url: `/flow/${botId}`, method: 'GET', data: null }),
+    }),
+    getBot: builder.query({
+      query: (botId) => ({ url: `/editor/${botId}`, method: 'GET', data: null }),
     }),
     getStep: builder.query<IStep[], void>({
       query: (flowId) => ({
@@ -36,11 +43,33 @@ export const loquiapi = createApi({
       query: (step) => ({ url: `/step/`, method: 'POST', data: step }),
       invalidatesTags: ['Step'],
     }),
+    updateStep: builder.mutation({
+      query: (step) => ({ url: `/step/${step.id}`, method: 'PUT', data: step }),
+      invalidatesTags: ['Step'],
+    }),
     deleteStep: builder.mutation({
       query: (step) => ({ url: `/step/`, method: 'DELETE', data: step }),
       invalidatesTags: ['Step'],
     }),
-    getFlowMap: builder.query<IStepNode[], void>({
+    deleteComponent: builder.mutation({
+      query: (step) => ({ url: `/component/`, method: 'DELETE', data: step }),
+      invalidatesTags: ['Step'],
+    }),
+    getStepById: builder.query({
+      query: (stepId) => ({
+        url: `/step/${stepId}`,
+        method: 'GET',
+        data: null,
+      }),
+      providesTags: (result, error, arg) =>
+        result
+          ? [
+              { type: 'Step' as const, id: result.id },
+              'Step',
+            ]
+          : ['Step'],
+    }),
+    getFlowMap: builder.query({
       query: (flowId) => ({
         url: `/flow/map/${flowId}`,
         method: 'GET',
@@ -60,7 +89,12 @@ export const loquiapi = createApi({
 export const {
   useGetFlowQuery,
   useGetStepQuery,
-	useGetFlowMapQuery,
+	useGetStepByIdQuery,
+  useGetFlowMapQuery,
+	useDeleteComponentMutation,
   useCreateStepMutation,
   useDeleteStepMutation,
+  useUpdateStepMutation,
+	useUpdateBotMutation,
+	useGetBotQuery,
 } = loquiapi;

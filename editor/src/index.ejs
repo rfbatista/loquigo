@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="<%= require('./icon.svg') %>" />
+    <title>Monaco YAML</title>
+  </head>
+  <body>
+    <div class="editor-wrapper">
+      <div>
+        <select id="schema-selection">
+          <option value="monaco-yaml.yaml">Monaco YAML example</option>
+        </select>
+      </div>
+      <div id="editor"></div>
+      <div id="problems"></div>
+    </div>
+  </body>
+</html>

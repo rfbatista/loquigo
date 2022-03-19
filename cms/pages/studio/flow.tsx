@@ -1,4 +1,4 @@
-import ReactFlow, { Controls } from 'react-flow-renderer';
+import ReactFlow, { Background, Controls } from 'react-flow-renderer';
 import { useGetFlowMapQuery, useGetStepQuery } from 'services/loquiapi';
 import StepNode from 'components/StepNode';
 import { useSelector } from 'react-redux';
@@ -19,6 +19,7 @@ const Map = ({ containerRef, activeFlow }) => {
   return (
     <div style={{ height: height - 65, width: width }}>
       <ReactFlow elements={data ?? []} nodeTypes={nodeTypes}>
+        <Background color={'#F6F8FA'} />
         <Controls />
       </ReactFlow>
     </div>

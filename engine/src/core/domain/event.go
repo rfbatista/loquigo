@@ -1,12 +1,12 @@
 package domain
 
 type Event struct {
-	Bot       Bot     `json:"bot"`
-	User      User    `json:"user"`
-	Message   Message `json:"message"`
-	Timestamp string  `json:"timestamp"`
+	Bot       EventBot `json:"bot"`
+	User      User     `json:"user"`
+	Message   Message  `json:"message"`
+	Timestamp string   `json:"timestamp"`
 }
 
-type Bot struct {
+type EventBot struct {
 	ID string `json:"id"`
 }

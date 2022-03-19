@@ -2,32 +2,19 @@ package infrastructure
 
 import (
 	adapters "loquigo/engine/src/adapters/transport/http"
-	controller "loquigo/engine/src/adapters/transport/http"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
-func NewServer(
-	c controller.ChatController,
-	f controller.FlowController,
-	s controller.StepController,
-	co controller.ComponentController,
-	fo controller.FlowMapController) Server {
-	return Server{
-		ChatController:      c,
-		FlowController:      f,
-		StepController:      s,
-		ComponentController: co,
-		FlowMapController:   fo}
+func NewServer(e adapters.EditorController, c adapters.ChatController, b adapters.BotController) Server {
+	return Server{EditorController: e, ChatController: c, BotController: b}
 }
 
 type Server struct {
-	ChatController      controller.ChatController
-	FlowController      controller.FlowController
-	StepController      controller.StepController
-	ComponentController controller.ComponentController
-	FlowMapController   controller.FlowMapController
+	EditorController adapters.EditorController
+	ChatController   adapters.ChatController
+	BotController    adapters.BotController
 }
 
 func (s Server) Start() {
@@ -35,10 +22,8 @@ func (s Server) Start() {
 	r.Router.Use(gin.Recovery())
 	r.Router.Use(cors.Default())
 	v1 := r.Router.Group("/v1")
-	r.AddFlowRoutes(v1, s.FlowController)
-	r.AddStepRoutes(v1, s.StepController)
-	r.AddComponentRoutes(v1, s.ComponentController)
+	r.AddEditorRoutes(v1, s.EditorController)
 	r.AddChatRoutes(v1, s.ChatController)
-	r.AddFlowMapRoutes(v1, s.FlowMapController)
+	r.AddBotRoutes(v1, s.BotController)
 	r.Router.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }

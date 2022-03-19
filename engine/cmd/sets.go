@@ -1,12 +1,14 @@
 package cmd
 
 import (
-	adapterservices "loquigo/engine/src/adapters/services"
+	editorservice "loquigo/engine/src/adapters/services/editor"
 	adapters "loquigo/engine/src/adapters/transport/http"
-	"loquigo/engine/src/core/modules/dialogmanager"
-	"loquigo/engine/src/core/modules/eventmanager"
-	"loquigo/engine/src/core/modules/templatepool"
-	infra "loquigo/engine/src/infrastructure"
+	"loquigo/engine/src/core/services/bot"
+	"loquigo/engine/src/core/services/components"
+	"loquigo/engine/src/core/services/dialogmanager"
+	"loquigo/engine/src/core/services/eventmanager"
+	"loquigo/engine/src/core/services/nodes"
+	"loquigo/engine/src/core/services/runner"
 	"loquigo/engine/src/infrastructure/database/mongo/repositories"
 
 	"github.com/google/wire"
@@ -23,7 +25,7 @@ var UserRepoSet = wire.NewSet(
 
 var UserStateRepoSet = wire.NewSet(
 	repositories.NewUserStatestRepo,
-	wire.Bind(new(templatepool.UserStateRepo), new(repositories.UserStatesRepo)),
+	wire.Bind(new(runner.UserStateRepo), new(repositories.UserStatesRepo)),
 )
 
 var UserContextSet = wire.NewSet(
@@ -31,88 +33,82 @@ var UserContextSet = wire.NewSet(
 	wire.Bind(new(dialogmanager.UserContextRepository), new(repositories.UserContextRepository)),
 )
 
-var FlowRepoSet = wire.NewSet(
-	repositories.NewFlowRepository,
-	wire.Bind(new(templatepool.FlowRepository), new(repositories.FlowRepository)),
+var GroupRepoSet = wire.NewSet(
+	repositories.NewGroupRepository,
+	wire.Bind(new(nodes.GroupRepository), new(repositories.GroupRepository)),
 )
 
-var StepRepoSet = wire.NewSet(
-	repositories.NewStepRepository,
-	wire.Bind(new(templatepool.StepRepository), new(repositories.StepRepository)),
+var NodeRepoSet = wire.NewSet(
+	repositories.NewNodeRepository,
+	wire.Bind(new(nodes.NodeRepository), new(repositories.NodeRepository)),
 )
 
 var ComponentRepoSet = wire.NewSet(
 	repositories.NewComponentRepo,
-	wire.Bind(new(templatepool.ComponentRepository), new(repositories.ComponentRepository)),
+	wire.Bind(new(components.ComponentRepository), new(repositories.ComponentRepository)),
+)
+
+var BotRepoSet = wire.NewSet(
+	repositories.NewBotRepository,
+	wire.Bind(new(bot.BotRepository), new(repositories.BotRepository)),
 )
 
 //*****************
 // Services
 //*****************
 
-var ContextSet = wire.NewSet(
+var ContextServiceSet = wire.NewSet(
 	UserContextSet,
 	dialogmanager.NewFindContextService,
 )
 
-var TemplatePoolSet = wire.NewSet(
-	UserStateRepoSet,
-	templatepool.NewTemplatePoolService,
-)
-
-var ChatServiceSet = wire.NewSet(
-	infra.NewHttpClient,
-	ContextSet,
-	TemplatePoolSet,
-	dialogmanager.NewRunDialogService,
-	eventmanager.NewSendMessageService,
-	UserRepoSet,
-	eventmanager.NewChatService,
-)
-
-var FlowServiceSet = wire.NewSet(
-	FlowRepoSet,
-	templatepool.NewFlowService,
-)
-
-var StepServiceSet = wire.NewSet(
-	StepRepoSet,
-	templatepool.NewStepService,
+var BotServiceSet = wire.NewSet(
+	BotRepoSet,
+	bot.NewBotService,
 )
 
 var ComponentServiceSet = wire.NewSet(
 	ComponentRepoSet,
-	templatepool.NewComponentService,
+	components.NewComponentService,
+	components.NewRunnerComponentService,
 )
 
-var FlowMapServiceSet = wire.NewSet(
-	adapterservices.NewFlowMapService,
-)
-
-//*****************
-// Controllers
-//*****************
-
-var ChatSet = wire.NewSet(
-	ChatServiceSet,
-	adapters.NewChatController)
-
-var FlowSet = wire.NewSet(
-	FlowServiceSet,
-	adapters.NewFlowController,
-)
-
-var StepSet = wire.NewSet(
-	StepServiceSet,
-	adapters.NewStepController,
-)
-
-var ComponentSet = wire.NewSet(
+var NodeServiceSet = wire.NewSet(
 	ComponentServiceSet,
-	adapters.NewComponentController,
+	BotServiceSet,
+	NodeRepoSet,
+	GroupRepoSet,
+	nodes.NewGroupService,
+	nodes.NewNodeService,
+	nodes.NewRunnerNodeService,
 )
 
-var FlowMapSet = wire.NewSet(
-	FlowMapServiceSet,
-	adapters.NewFlowMapController,
+var RunnerServiceSet = wire.NewSet(
+	UserStateRepoSet,
+	NodeServiceSet,
+	runner.NewRunner,
+	runner.NewRunnerService,
+)
+
+var DialogManagerServiceSet = wire.NewSet(
+	RunnerServiceSet,
+	ContextServiceSet,
+	dialogmanager.NewDialogManagerService,
+)
+
+var ChatServiceSet = wire.NewSet(
+	DialogManagerServiceSet,
+	eventmanager.NewChatService,
+)
+
+//*****************
+// Controller
+//*****************
+
+var ControllersSet = wire.NewSet(
+	ChatServiceSet,
+	editorservice.NewEditor,
+	adapters.NewEditorController,
+	adapters.NewChatController,
+	adapters.NewBotController,
 )

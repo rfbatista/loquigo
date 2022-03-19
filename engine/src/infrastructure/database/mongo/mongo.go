@@ -27,6 +27,7 @@ type MongoDB struct {
 }
 
 func (m *MongoDB) Connect() {
+	fmt.Printf("Connecting to mongodb %s", m.uri)
 	clientOptions := options.Client().ApplyURI(m.uri)
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {

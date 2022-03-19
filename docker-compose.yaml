@@ -34,7 +34,7 @@ services:
     env_file: .env
     ports:
       - 4000:4000
-      - 9229:9229
+      - 2345:2345
     environment:
       - MONGO_DB_NAME=$MONGO_DB_NAME
       - MONGO_DB_USER=$MONGO_DB_USER
@@ -42,9 +42,7 @@ services:
       - MONGO_PORT=27017
       - MONGO_HOST=loqui-mongodb
     volumes:
-      - type: bind
-        source: ./engine/
-        target: /app
+     - ./engine:/app:rw,delegated
     networks:
       - loqui-network-dev
     depends_on:

@@ -5,6 +5,7 @@ import (
 	"loquigo/engine/src/core/domain"
 	"loquigo/engine/src/infrastructure"
 	database "loquigo/engine/src/infrastructure/database/mongo"
+	"loquigo/engine/src/infrastructure/database/mongo/schemas"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -27,13 +28,13 @@ func (u UserContextRepository) FindByUserId(userId string) (domain.UserContext, 
 	filter := bson.D{primitive.E{Key: "user_id", Value: userId}}
 	projection := bson.D{}
 	opts := options.FindOne().SetProjection(projection)
-	var userContext domain.UserContext
+	var userContext schemas.UserContextSchema
 	error := u.collection.FindOne(context.TODO(), filter, opts).Decode(&userContext)
 	if error != nil {
 		u.logger.Error("UserContextRepo", error)
 		return domain.NewUserContext(), error
 	}
-	return userContext, nil
+	return userContext.ToDomain(), nil
 }
 
 func (u UserContextRepository) SaveMemory(ctx domain.UserContext) error {
@@ -41,6 +42,7 @@ func (u UserContextRepository) SaveMemory(ctx domain.UserContext) error {
 }
 
 func (u UserContextRepository) Update(ctx domain.UserContext) error {
+	schemas.NewUserContextSchema(ctx)
 	filter := bson.D{primitive.E{Key: "_id", Value: ctx.ID}}
 	_, err := u.collection.ReplaceOne(context.Background(), filter, ctx)
 	if err != nil {

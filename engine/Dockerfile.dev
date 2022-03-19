@@ -1,6 +1,9 @@
-FROM golang:1.16-alpine
+FROM golang
 WORKDIR /app
 COPY . .
-RUN go mod download
-RUN go build -o /docker-gs-ping
-CMD [ "/docker-gs-ping" ]
+RUN go get ./
+RUN go build
+RUN go get github.com/pilu/fresh
+# RUN fresh
+CMD fresh
+EXPOSE 4000
