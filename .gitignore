@@ -1,7 +1,7 @@
 go
 *.env
 .idea/
-editor
+./editor
 */**/node_modules
 tmp
 */tmp

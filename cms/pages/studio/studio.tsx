@@ -10,6 +10,7 @@ import {
   Navbar,
   Nav,
   Dropdown,
+	InputPicker,
   FlexboxGrid,
 } from 'rsuite';
 import dynamic from 'next/dynamic';
@@ -23,21 +24,29 @@ const YamlEditor = ({ data }) => {
   const send = () => {
     updateBot(postBody)
       .unwrap()
-      .catch((error) => toaster.push(message, { placement: 'topCenter' }));
+      .then(() => toaster.push(sucessMessage, { placement: 'topCenter' }))
+      .catch((error) => toaster.push(errorMessage, { placement: 'topCenter' }));
   };
-  const message = (
-    <Message showIcon type='error' header='Error'>
+  const errorMessage = (
+    <Message showIcon type='error' header='Erro'>
       Não foi posivel salvar.
     </Message>
   );
-
+  const sucessMessage = (
+    <Message showIcon type='success' header='Sucesso'>
+      Atualizava salva com sucesso.
+    </Message>
+  );
   return (
     <>
       <Header className='w-full'>
-        <Navbar>
+        <Navbar appearance='inverse'>
           <Nav>
             <Nav.Item>
               <Panel updateBot={send} isLoading={isUpdating} />
+            </Nav.Item>
+            <Nav.Item>
+              <InputPicker style={{ width: 224 }} />
             </Nav.Item>
           </Nav>
         </Navbar>

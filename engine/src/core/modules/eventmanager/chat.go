@@ -5,14 +5,12 @@ import (
 	"loquigo/engine/src/core/modules/dialogmanager"
 )
 
-func NewChatService(d dialogmanager.RunDialogService, userRepo UserRepository) ChatService {
-	return ChatService{dm: d, userRepo: userRepo}
+func NewChatService(d dialogmanager.DialogManagerService) ChatService {
+	return ChatService{dm: d}
 }
 
 type ChatService struct {
-	dm dialogmanager.RunDialogService
-	// sender   SendMessageService
-	userRepo UserRepository
+	dm dialogmanager.DialogManagerService
 }
 
 func (c ChatService) Run(e domain.Event) ([]domain.Message, error) {
@@ -20,22 +18,20 @@ func (c ChatService) Run(e domain.Event) ([]domain.Message, error) {
 	if err != nil {
 		return nil, err
 	}
-	_, err = verifyUser(e)
-	if err != nil {
-		return nil, err
-	}
+	// Maybe block user as a feature?
+	// _, err = verifyUser(e)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	if err != nil {
 		return nil, err
 	}
-
-	c.userRepo.FindUserOrCreate(e.User.ExternalId)
 
 	messages, err := c.dm.Run(e)
 	if err != nil {
 		return messages, err
 	}
-	// c.sender.Send(messages)
 
 	return messages, nil
 }
@@ -44,6 +40,6 @@ func verifyBot(e domain.Event) (bool, error) {
 	return true, nil
 }
 
-func verifyUser(e domain.Event) (bool, error) {
-	return true, nil
-}
+// func verifyUser(e domain.Event) (bool, error) {
+// 	return true, nil
+// }

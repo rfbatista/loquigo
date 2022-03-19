@@ -1,21 +1,21 @@
 package domain
 
 type UserState struct {
-	ID     string `bson:"_id"`
-	UserId string `bson:"user_id"`
-	FlowId string `bson:"flow_id"`
-	StepId string `bson:"step_id"`
+	ID      string `bson:"_id"`
+	UserId  string `bson:"user_id"`
+	GroupId string `bson:"group_id"`
+	NodeId  string `bson:"node_id"`
 }
 
-func NewUserState(userId, flowId string, stepID string) UserState {
-	return UserState{UserId: userId, FlowId: flowId, StepId: stepID}
+func NewUserState(userId, GroupId string, NodeId string) UserState {
+	return UserState{UserId: userId, GroupId: GroupId, NodeId: NodeId}
 }
 
-func NewState(flowId string, stepID string) State {
-	return State{FlowId: flowId, StepId: stepID}
+func NewState(groupId string, nodeId string) State {
+	return State{GroupId: groupId, NodeId: nodeId}
 }
 
 type State struct {
-	FlowId string `bson:"flow_id"`
-	StepId string `bson:"step_id"`
+	GroupId string `bson:"grup_id"`
+	NodeId  string `bson:"node_id"`
 }

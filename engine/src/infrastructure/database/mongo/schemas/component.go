@@ -1,36 +1,36 @@
 package schemas
 
 import (
-	"loquigo/engine/src/core/modules/template/pool"
+	"loquigo/engine/src/core/modules/components"
 )
 
-func NewComponentSchema(component pool.Component) (ComponentSchema, error) {
+func NewComponentSchema(component components.Component) (ComponentSchema, error) {
 	return ComponentSchema{
-		ID:       component.ID,
-		BotId:    component.BotId,
-		FlowId:   component.FlowId,
-		StepId:   component.StepId,
-		Type:     component.Type,
-		Data:     component.Data,
-		Sequence: component.Sequence,
+		ID:           component.ID,
+		BotReference: component.BotReference,
+		GroupId:      component.GroupId,
+		NodeId:       component.NodeId,
+		Type:         component.Type,
+		Data:         component.Data,
+		Sequence:     component.Sequence,
 	}, nil
 }
 
 type ComponentSchema struct {
-	ID       string             `bson:"id" json:"id,omitempty"`
-	BotId    string             `bson:"bot_id"`
-	FlowId   string             `bson:"flow_id"`
-	StepId   string             `bson:"step_id"`
-	Type     string             `bson:"type"`
-	Data     pool.ComponentData `bson:"data"`
-	Sequence int                `bson:"sequence"`
+	ID           string                   `bson:"id" json:"id,omitempty"`
+	BotReference string                   `bson:"bot_reference"`
+	GroupId      string                   `bson:"group_id"`
+	NodeId       string                   `bson:"group_id"`
+	Type         string                   `bson:"type"`
+	Data         components.ComponentData `bson:"data"`
+	Sequence     int                      `bson:"sequence"`
 }
 
-func (c ComponentSchema) ToDomain() pool.Component {
-	return pool.Component{
+func (c ComponentSchema) ToDomain() components.Component {
+	return components.Component{
 		ID:       c.ID,
-		FlowId:   c.FlowId,
-		StepId:   c.StepId,
+		GroupId:  c.GroupId,
+		NodeId:   c.NodeId,
 		Type:     c.Type,
 		Data:     c.Data,
 		Sequence: c.Sequence,

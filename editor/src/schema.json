@@ -1,0 +1,39 @@
+{
+  "type": "object",
+  "properties": {
+    "flows": {
+      "type": { "type": "array", "items": { "$ref": "#/$defs/flow" } }
+    }
+  },
+  "$defs": {
+    "flow": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "steps": { "type": "array", "items": { "$ref": "#/$defs/step" } }
+      }
+    },
+    "step": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "components": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/component" }
+        }
+      }
+    },
+    "component": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "Type of component",
+          "enum": ["text", "hold", "goto"]
+        },
+        "text": {},
+        "flow": {},
+        "step": {}
+      }
+    }
+  }
+}

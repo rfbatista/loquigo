@@ -7,12 +7,14 @@
 package cmd
 
 import (
-	"loquigo/engine/src/adapters/services"
+	"loquigo/engine/src/adapters/services/editor"
 	"loquigo/engine/src/adapters/transport/http"
+	"loquigo/engine/src/core/modules/bot"
+	"loquigo/engine/src/core/modules/components"
 	"loquigo/engine/src/core/modules/dialogmanager"
 	"loquigo/engine/src/core/modules/eventmanager"
-	"loquigo/engine/src/core/modules/template/pool"
-	"loquigo/engine/src/core/modules/template/runner"
+	"loquigo/engine/src/core/modules/nodes"
+	"loquigo/engine/src/core/modules/runner"
 	"loquigo/engine/src/infrastructure"
 	"loquigo/engine/src/infrastructure/database/mongo"
 	"loquigo/engine/src/infrastructure/database/mongo/repositories"
@@ -21,25 +23,27 @@ import (
 // Injectors from wire.go:
 
 func InitializeEvent(db mongo.MongoDB) (infrastructure.Server, error) {
-	flowRepository := repositories.NewFlowRepository(db)
-	flowService := pool.NewFlowService(flowRepository)
-	stepRepository := repositories.NewStepRepository(db)
+	groupRepository := repositories.NewGroupRepository(db)
+	groupService := nodes.NewGroupService(groupRepository)
+	nodeRepository := repositories.NewNodeRepository(db)
 	componentRepository := repositories.NewComponentRepo(db)
-	componentService := pool.NewComponentService(componentRepository)
-	stepService := pool.NewStepService(stepRepository, componentService)
-	editorService := adapterservices.NewEditor(flowService, stepService, componentService)
+	componentService := components.NewComponentService(componentRepository)
+	nodeService := nodes.NewNodeService(nodeRepository, componentService)
+	botRepository := repositories.NewBotRepository(db)
+	botService := bot.NewBotService(botRepository)
+	editorService := editorservice.NewEditor(groupService, nodeService, componentService, botService)
 	editorController := adapters.NewEditorController(editorService)
 	userStatesRepo := repositories.NewUserStatestRepo(db)
-	botRepository := repositories.NewBotRepository(db)
-	runnerStepService := runner.NewRunnerStepService(botRepository, flowRepository, stepRepository, componentRepository)
-	runnerRunner := runner.NewRunnerService(runnerStepService)
-	runnerService := runner.NewChatRunnerService(userStatesRepo, runnerStepService, runnerRunner)
+	runnerComponentService := components.NewRunnerComponentService(componentRepository)
+	runnerNodeService := nodes.NewRunnerNodeService(botService, groupRepository, nodeRepository, runnerComponentService)
+	runnerRunner := runner.NewRunner(runnerNodeService)
+	runnerService := runner.NewRunnerService(userStatesRepo, runnerNodeService, runnerRunner)
 	userContextRepository := repositories.NewUserContextRepo(db)
 	findContextService := dialogmanager.NewFindContextService(userContextRepository)
-	runDialogService := dialogmanager.NewRunDialogService(runnerService, findContextService)
-	userRepository := repositories.NewUserRepository(db)
-	chatService := eventmanager.NewChatService(runDialogService, userRepository)
+	dialogManagerService := dialogmanager.NewDialogManagerService(runnerService, findContextService)
+	chatService := eventmanager.NewChatService(dialogManagerService)
 	chatController := adapters.NewChatController(chatService)
-	server := infrastructure.NewServer(editorController, chatController)
+	botController := adapters.NewBotController(botService)
+	server := infrastructure.NewServer(editorController, chatController, botController)
 	return server, nil
 }

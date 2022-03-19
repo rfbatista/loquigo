@@ -1,13 +1,13 @@
 package adapters
 
 import (
-	adapterservices "loquigo/engine/src/adapters/services"
+	editorservice "loquigo/engine/src/adapters/services/editor"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func NewEditorController(e adapterservices.EditorService) EditorController {
+func NewEditorController(e editorservice.EditorService) EditorController {
 	return EditorController{EditorService: e}
 }
 
@@ -19,7 +19,7 @@ func (r HttpRouter) AddEditorRoutes(rg *gin.RouterGroup, controller EditorContro
 }
 
 type EditorController struct {
-	EditorService adapterservices.EditorService
+	EditorService editorservice.EditorService
 }
 
 type Input struct {
@@ -32,8 +32,12 @@ func (e EditorController) UpdateBot(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	response, _ := e.EditorService.UpdateBot(input.Data)
-	c.JSON(http.StatusOK, gin.H{"data": response})
+	response, err := e.EditorService.UpdateBot(input.Data)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"data": err.Error()})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"data": response})
+	}
 }
 
 func (e EditorController) FindBot(c *gin.Context) {
