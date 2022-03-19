@@ -1,6 +1,9 @@
 package nodes
 
-import "loquigo/engine/src/core/modules/components"
+import (
+	"loquigo/engine/src/core/domain"
+	"loquigo/engine/src/core/services/components"
+)
 
 func NewNodeService(repo NodeRepository, service components.ComponentService) NodeService {
 	return NodeService{nodeRepository: repo, componentService: service}
@@ -11,27 +14,27 @@ type NodeService struct {
 	componentService components.ComponentService
 }
 
-func (s NodeService) NewNode(step Node) (Node, error) {
+func (s NodeService) NewNode(step domain.Node) (domain.Node, error) {
 	stepCreated, _ := s.nodeRepository.Create(step)
 	return stepCreated, nil
 }
 
-func (s NodeService) UpdateNode(step Node) (Node, error) {
+func (s NodeService) UpdateNode(step domain.Node) (domain.Node, error) {
 	stepCreated, _ := s.nodeRepository.Update(step)
 	return stepCreated, nil
 }
 
-func (s NodeService) DeleteNode(step Node) (Node, error) {
+func (s NodeService) DeleteNode(step domain.Node) (domain.Node, error) {
 	stepCreated, _ := s.nodeRepository.Delete(step)
 	return stepCreated, nil
 }
 
-func (s NodeService) FindByGroupId(groupId string) ([]Node, error) {
+func (s NodeService) FindByGroupId(groupId string) ([]domain.Node, error) {
 	steps, _ := s.nodeRepository.FindByGroupId(groupId)
 	return steps, nil
 }
 
-func (s NodeService) FindById(groupId string) (Node, error) {
+func (s NodeService) FindById(groupId string) (domain.Node, error) {
 	step, _ := s.nodeRepository.FindById(groupId)
 	return step, nil
 }
@@ -42,6 +45,6 @@ func (s NodeService) DeleteByBotID(botReference string) error {
 }
 
 //todo: implement
-func (s NodeService) FindByIdGroupId(Id string, groupId string) (Node, error) {
-	return Node{}, nil
+func (s NodeService) FindByIdGroupId(Id string, groupId string) (domain.Node, error) {
+	return domain.Node{}, nil
 }

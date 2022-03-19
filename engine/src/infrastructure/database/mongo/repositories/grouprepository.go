@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"context"
-	"loquigo/engine/src/core/modules/nodes"
+	"loquigo/engine/src/core/domain"
 	database "loquigo/engine/src/infrastructure/database/mongo"
 	"loquigo/engine/src/infrastructure/database/mongo/schemas"
 
@@ -21,7 +21,7 @@ type GroupRepository struct {
 	collection mongo.Collection
 }
 
-func (f GroupRepository) FindByBotId(id string) ([]nodes.Group, error) {
+func (f GroupRepository) FindByBotId(id string) ([]domain.Group, error) {
 	//Bot id should be ObjectId
 	//ID, _ := primitive.ObjectIDFromHex(id)
 	filter := bson.D{
@@ -32,46 +32,46 @@ func (f GroupRepository) FindByBotId(id string) ([]nodes.Group, error) {
 	var schemas []schemas.GroupSchema
 	cursor, err := f.collection.Find(context.TODO(), filter, opts)
 	if err != nil {
-		return []nodes.Group{}, err
+		return []domain.Group{}, err
 	}
 	defer cursor.Close(context.TODO())
 	if err := cursor.All(context.TODO(), &schemas); err != nil {
-		return []nodes.Group{}, err
+		return []domain.Group{}, err
 	}
-	var components = []nodes.Group{}
+	var components = []domain.Group{}
 	for _, schema := range schemas {
 		components = append(components, schema.ToDomain())
 	}
 	return components, nil
 }
 
-func (f GroupRepository) Create(group nodes.Group) (nodes.Group, error) {
+func (f GroupRepository) Create(group domain.Group) (domain.Group, error) {
 	schema, _ := schemas.NewGroupSchema(group)
 	_, err := f.collection.InsertOne(context.TODO(), schema)
 	if err != nil {
-		return nodes.Group{}, err
+		return domain.Group{}, err
 	}
 	return schema.ToDomain(), nil
 }
 
-func (f GroupRepository) Update(flow nodes.Group) (nodes.Group, error) {
+func (f GroupRepository) Update(flow domain.Group) (domain.Group, error) {
 	schema, _ := schemas.NewGroupSchema(flow)
 	opts := options.Update().SetUpsert(false)
 	filter := bson.D{primitive.E{Key: "id", Value: schema.ID}}
 	_, err := f.collection.UpdateOne(context.TODO(), filter, schema, opts)
 	if err != nil {
-		return nodes.Group{}, err
+		return domain.Group{}, err
 	}
 	return schema.ToDomain(), nil
 }
 
-func (f GroupRepository) Delete(group nodes.Group) (nodes.Group, error) {
+func (f GroupRepository) Delete(group domain.Group) (domain.Group, error) {
 	schema, _ := schemas.NewGroupSchema(group)
 	opts := options.Delete()
 	filter := bson.D{primitive.E{Key: "id", Value: schema.ID}}
 	_, err := f.collection.DeleteOne(context.TODO(), filter, opts)
 	if err != nil {
-		return nodes.Group{}, err
+		return domain.Group{}, err
 	}
 	return schema.ToDomain(), nil
 }

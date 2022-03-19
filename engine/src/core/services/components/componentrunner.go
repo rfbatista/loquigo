@@ -9,12 +9,12 @@ type RunnerComponent interface {
 func BuildRunnerComponent(c domain.Component) RunnerComponent {
 	switch c.Type {
 	case "text":
-		return domain.NewTextComponent(c)
+		return NewTextComponent(c)
 	case "goto":
-		return domain.NewGotoComponent(c)
+		return NewGotoComponent(c)
 	case "hold":
-		return domain.NewHoldComponent(c)
+		return NewHoldComponent(c)
 	}
 	//todo: need to avoid creating a component when there is no type matched
-	return domain.NewTextComponent(c)
+	return NewTextComponent(c)
 }

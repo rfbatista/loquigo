@@ -1,8 +1,9 @@
 package adapterservices
 
 import (
-	"loquigo/engine/src/core/modules/components"
-	"loquigo/engine/src/core/modules/nodes"
+	"loquigo/engine/src/core/domain"
+	"loquigo/engine/src/core/services/components"
+	"loquigo/engine/src/core/services/nodes"
 )
 
 type NodePosition struct {
@@ -15,11 +16,11 @@ type NodeHandler struct {
 }
 
 type NodeData struct {
-	ID         string                 `json:"id"`
-	FlowID     string                 `json:"flowId"`
-	Name       string                 `json:"name"`
-	Components []components.Component `json:"components"`
-	Handlers   []NodeHandler          `json:"handlers"`
+	ID         string             `json:"id"`
+	FlowID     string             `json:"flowId"`
+	Name       string             `json:"name"`
+	Components []domain.Component `json:"components"`
+	Handlers   []NodeHandler      `json:"handlers"`
 }
 
 type Node struct {
@@ -29,8 +30,8 @@ type Node struct {
 	Position NodePosition `json:"position"`
 }
 
-func (n Node) ToDomain() nodes.Node {
-	step := nodes.NewStep(n.Data.ID, n.Data.FlowID, n.Data.Name)
+func (n Node) ToDomain() domain.Node {
+	step := domain.NewStep(n.Data.ID, n.Data.FlowID, n.Data.Name)
 	step.Components = n.Data.Components
 	return step
 }
@@ -66,7 +67,7 @@ func (f FlowMapService) GetMapFromFlow(flowId string) []Node {
 	return nodes
 }
 
-func createNodeFromStep(step nodes.Node, position NodePosition) Node {
+func createNodeFromStep(step domain.Node, position NodePosition) Node {
 	node := Node{
 		Id:   step.ID,
 		Type: "step",

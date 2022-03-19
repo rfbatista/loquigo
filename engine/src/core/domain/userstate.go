@@ -1,14 +1,13 @@
 package domain
 
 type UserState struct {
-	ID      string `bson:"_id"`
-	UserId  string `bson:"user_id"`
-	GroupId string `bson:"group_id"`
-	NodeId  string `bson:"node_id"`
+	ID     string `bson:"_id"`
+	UserId string `bson:"user_id"`
+	State
 }
 
 func NewUserState(userId, GroupId string, NodeId string) UserState {
-	return UserState{UserId: userId, GroupId: GroupId, NodeId: NodeId}
+	return UserState{UserId: userId, State: State{GroupId: GroupId, NodeId: NodeId}}
 }
 
 func NewState(groupId string, nodeId string) State {

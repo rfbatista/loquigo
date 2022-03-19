@@ -16,6 +16,8 @@ func (r HttpRouter) AddEditorRoutes(rg *gin.RouterGroup, controller EditorContro
 
 	route.PUT("/", controller.UpdateBot)
 	route.GET("/:botId", controller.FindBot)
+	route.GET("/:botId/version", controller.FindVersions)
+	route.GET("/:botId/version/:versionId", controller.FindVersionByIdAndBotID)
 }
 
 type EditorController struct {
@@ -43,5 +45,18 @@ func (e EditorController) UpdateBot(c *gin.Context) {
 func (e EditorController) FindBot(c *gin.Context) {
 	botID := c.Param("botId")
 	response, _ := e.EditorService.FindBot(botID)
+	c.YAML(http.StatusOK, response)
+}
+
+func (e EditorController) FindVersions(c *gin.Context) {
+	botID := c.Param("botId")
+	response, _ := e.EditorService.FindBotVersions(botID)
+	c.YAML(http.StatusOK, response)
+}
+
+func (e EditorController) FindVersionByIdAndBotID(c *gin.Context) {
+	botID := c.Param("botId")
+	versionID := c.Param("versionId")
+	response, _ := e.EditorService.FindVersionByIdAndBotId(versionID, botID)
 	c.YAML(http.StatusOK, response)
 }

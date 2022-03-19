@@ -2,7 +2,7 @@ package runner
 
 import (
 	"loquigo/engine/src/core/domain"
-	"loquigo/engine/src/core/modules/nodes"
+	"loquigo/engine/src/core/services/nodes"
 )
 
 func NewRunnerService(repo UserStateRepo, stepService nodes.RunnerNodeService, runner Runner) RunnerService {
@@ -31,7 +31,7 @@ func (t RunnerService) Run(event domain.Event, context domain.UserContext) ([]do
 	if err != nil {
 		return messages, err
 	}
-	t.userStateRepo.Update(domain.UserState{UserId: event.User.ID, GroupId: newState.GroupId, NodeId: newState.NodeId})
+	t.userStateRepo.Update(domain.UserState{UserId: event.User.ID, State: domain.State{GroupId: newState.GroupId, NodeId: newState.NodeId}})
 	return messages, nil
 }
 

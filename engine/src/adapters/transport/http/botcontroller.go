@@ -1,7 +1,7 @@
 package adapters
 
 import (
-	"loquigo/engine/src/core/modules/bot"
+	"loquigo/engine/src/core/services/bot"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

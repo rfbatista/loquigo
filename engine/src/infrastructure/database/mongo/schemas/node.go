@@ -1,10 +1,8 @@
 package schemas
 
-import (
-	"loquigo/engine/src/core/modules/nodes"
-)
+import "loquigo/engine/src/core/domain"
 
-func NewNodeSchema(node nodes.Node) (NodeSchema, error) {
+func NewNodeSchema(node domain.Node) (NodeSchema, error) {
 	return NodeSchema{
 		ID:           node.ID,
 		BotReference: node.BotReference,
@@ -20,6 +18,6 @@ type NodeSchema struct {
 	Name         string `bson:"name"`
 }
 
-func (s NodeSchema) ToDomain() nodes.Node {
-	return nodes.Node{ID: s.ID, BotReference: s.BotReference, NodeId: s.NodeId, Name: s.Name}
+func (s NodeSchema) ToDomain() domain.Node {
+	return domain.Node{ID: s.ID, BotReference: s.BotReference, NodeId: s.NodeId, Name: s.Name}
 }

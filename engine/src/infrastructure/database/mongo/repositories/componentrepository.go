@@ -3,7 +3,7 @@ package repositories
 import (
 	"context"
 	"log"
-	"loquigo/engine/src/core/modules/components"
+	"loquigo/engine/src/core/domain"
 	database "loquigo/engine/src/infrastructure/database/mongo"
 	"loquigo/engine/src/infrastructure/database/mongo/schemas"
 
@@ -21,15 +21,15 @@ type ComponentRepository struct {
 	collection mongo.Collection
 }
 
-func (c ComponentRepository) FindByGroupIdAndNodeId(botId string, groupId string, nodeId string) ([]components.Component, error) {
+func (c ComponentRepository) FindByGroupIdAndNodeId(botId string, groupId string, nodeId string) ([]domain.Component, error) {
 	filter := bson.M{"bot_id": botId, "group_id": groupId, "node_id": nodeId}
 	opts := options.Find()
 	cur, err := c.collection.Find(context.TODO(), filter, opts)
 	if err != nil {
-		return []components.Component{}, err
+		return []domain.Component{}, err
 	}
 	defer cur.Close(context.TODO())
-	var components = []components.Component{}
+	var components = []domain.Component{}
 	for cur.Next(context.TODO()) {
 
 		// create a value into which the single document can be decoded
@@ -44,16 +44,16 @@ func (c ComponentRepository) FindByGroupIdAndNodeId(botId string, groupId string
 	return components, nil
 }
 
-func (c ComponentRepository) Create(component components.Component) (components.Component, error) {
+func (c ComponentRepository) Create(component domain.Component) (domain.Component, error) {
 	schema, _ := schemas.NewComponentSchema(component)
 	_, err := c.collection.InsertOne(context.TODO(), schema)
 	if err != nil {
-		return components.Component{}, err
+		return domain.Component{}, err
 	}
 	return schema.ToDomain(), nil
 }
 
-func (c ComponentRepository) Update(component components.Component) (components.Component, error) {
+func (c ComponentRepository) Update(component domain.Component) (domain.Component, error) {
 	schema, _ := schemas.NewComponentSchema(component)
 
 	opts := options.Update().SetUpsert(true)
@@ -70,12 +70,12 @@ func (c ComponentRepository) Update(component components.Component) (components.
 	_, err := c.collection.UpdateOne(context.Background(), filter, update, opts)
 	if err != nil {
 
-		return components.Component{}, err
+		return domain.Component{}, err
 	}
 	return schema.ToDomain(), nil
 }
 
-func (c ComponentRepository) Delete(Icomponent components.Component) (components.Component, error) {
+func (c ComponentRepository) Delete(Icomponent domain.Component) (domain.Component, error) {
 	schema, _ := schemas.NewComponentSchema(Icomponent)
 	opts := options.Delete()
 	filter := bson.M{"_id": schema.ID}
@@ -84,7 +84,7 @@ func (c ComponentRepository) Delete(Icomponent components.Component) (components
 
 	}
 	if err != nil {
-		return components.Component{}, err
+		return domain.Component{}, err
 	}
 	return schema.ToDomain(), nil
 }

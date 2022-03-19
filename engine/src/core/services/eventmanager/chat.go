@@ -2,7 +2,7 @@ package eventmanager
 
 import (
 	"loquigo/engine/src/core/domain"
-	"loquigo/engine/src/core/modules/dialogmanager"
+	"loquigo/engine/src/core/services/dialogmanager"
 )
 
 func NewChatService(d dialogmanager.DialogManagerService) ChatService {

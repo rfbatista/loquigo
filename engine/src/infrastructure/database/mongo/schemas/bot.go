@@ -3,7 +3,7 @@ package schemas
 import "loquigo/engine/src/core/domain"
 
 func NewBotSchema(bot domain.Bot) BotSchema {
-	return BotSchema{Id: bot.ID, BeginId: bot.BeginId, Name: bot.Name, Version: bot.Version}
+	return BotSchema{Id: bot.ID, BeginId: bot.BeginId, Name: bot.Name, Version: bot.CurrentVersion}
 }
 
 type BotSchema struct {
@@ -14,5 +14,5 @@ type BotSchema struct {
 }
 
 func (b BotSchema) ToDomain() domain.Bot {
-	return domain.Bot{ID: b.Id, BeginId: b.BeginId, Name: b.Name, Version: b.Version}
+	return domain.Bot{ID: b.Id, BeginId: b.BeginId, Name: b.Name, CurrentVersion: b.Version}
 }

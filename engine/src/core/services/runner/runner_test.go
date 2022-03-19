@@ -2,7 +2,7 @@ package runner
 
 // import (
 // 	"loquigo/engine/src/core/domain"
-// 	"loquigo/engine/src/core/modules/template/pool"
+// 	"loquigo/engine/src/core/services/template/pool"
 // 	"testing"
 // )
 

@@ -1,10 +1,8 @@
 package schemas
 
-import (
-	"loquigo/engine/src/core/modules/components"
-)
+import "loquigo/engine/src/core/domain"
 
-func NewComponentSchema(component components.Component) (ComponentSchema, error) {
+func NewComponentSchema(component domain.Component) (ComponentSchema, error) {
 	return ComponentSchema{
 		ID:           component.ID,
 		BotReference: component.BotReference,
@@ -17,17 +15,17 @@ func NewComponentSchema(component components.Component) (ComponentSchema, error)
 }
 
 type ComponentSchema struct {
-	ID           string                   `bson:"id" json:"id,omitempty"`
-	BotReference string                   `bson:"bot_reference"`
-	GroupId      string                   `bson:"group_id"`
-	NodeId       string                   `bson:"group_id"`
-	Type         string                   `bson:"type"`
-	Data         components.ComponentData `bson:"data"`
-	Sequence     int                      `bson:"sequence"`
+	ID           string               `bson:"id" json:"id,omitempty"`
+	BotReference string               `bson:"bot_reference"`
+	GroupId      string               `bson:"group_id"`
+	NodeId       string               `bson:"group_id"`
+	Type         string               `bson:"type"`
+	Data         domain.ComponentData `bson:"data"`
+	Sequence     int                  `bson:"sequence"`
 }
 
-func (c ComponentSchema) ToDomain() components.Component {
-	return components.Component{
+func (c ComponentSchema) ToDomain() domain.Component {
+	return domain.Component{
 		ID:       c.ID,
 		GroupId:  c.GroupId,
 		NodeId:   c.NodeId,

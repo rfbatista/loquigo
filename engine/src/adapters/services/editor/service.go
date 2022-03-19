@@ -3,9 +3,10 @@ package editorservice
 import (
 	"log"
 	adapterservices "loquigo/engine/src/adapters/services"
-	"loquigo/engine/src/core/modules/bot"
-	"loquigo/engine/src/core/modules/components"
-	"loquigo/engine/src/core/modules/nodes"
+	"loquigo/engine/src/core/domain"
+	"loquigo/engine/src/core/services/bot"
+	"loquigo/engine/src/core/services/components"
+	"loquigo/engine/src/core/services/nodes"
 
 	"gopkg.in/yaml.v2"
 )
@@ -69,4 +70,14 @@ func (e EditorService) FindBot(botId string) (BotEditor, error) {
 		}
 	}
 	return BotEditor{Groups: finalEditorFlows}, nil
+}
+
+func (e EditorService) FindBotVersions(botId string) ([]domain.BotVersion, error) {
+	versions, _ := e.botService.FindVersionsByBotId(botId)
+	return versions, nil
+}
+
+func (e EditorService) FindVersionByIdAndBotId(versionId string, botId string) (domain.BotVersion, error) {
+	version, _ := e.botService.FindVersionByIdAndBotId(versionId, botId)
+	return version, nil
 }

@@ -3,12 +3,12 @@ package cmd
 import (
 	editorservice "loquigo/engine/src/adapters/services/editor"
 	adapters "loquigo/engine/src/adapters/transport/http"
-	"loquigo/engine/src/core/modules/bot"
-	"loquigo/engine/src/core/modules/components"
-	"loquigo/engine/src/core/modules/dialogmanager"
-	"loquigo/engine/src/core/modules/eventmanager"
-	"loquigo/engine/src/core/modules/nodes"
-	"loquigo/engine/src/core/modules/runner"
+	"loquigo/engine/src/core/services/bot"
+	"loquigo/engine/src/core/services/components"
+	"loquigo/engine/src/core/services/dialogmanager"
+	"loquigo/engine/src/core/services/eventmanager"
+	"loquigo/engine/src/core/services/nodes"
+	"loquigo/engine/src/core/services/runner"
 	"loquigo/engine/src/infrastructure/database/mongo/repositories"
 
 	"github.com/google/wire"

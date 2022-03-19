@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"loquigo/engine/src/core/domain"
-	"loquigo/engine/src/core/modules/eventmanager"
+	"loquigo/engine/src/core/services/eventmanager"
 )
 
 func NewChatController(e eventmanager.ChatService) ChatController {

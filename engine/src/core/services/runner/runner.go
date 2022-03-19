@@ -2,7 +2,7 @@ package runner
 
 import (
 	"loquigo/engine/src/core/domain"
-	"loquigo/engine/src/core/modules/nodes"
+	"loquigo/engine/src/core/services/nodes"
 )
 
 func NewRunnerInput(message domain.Message, context domain.UserContext, state domain.State) RunnerInput {

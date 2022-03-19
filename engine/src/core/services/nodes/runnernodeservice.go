@@ -2,8 +2,8 @@ package nodes
 
 import (
 	"loquigo/engine/src/core/domain"
-	"loquigo/engine/src/core/modules/bot"
-	"loquigo/engine/src/core/modules/components"
+	"loquigo/engine/src/core/services/bot"
+	"loquigo/engine/src/core/services/components"
 )
 
 type RunnerNode interface {

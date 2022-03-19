@@ -1,10 +1,8 @@
 package schemas
 
-import (
-	"loquigo/engine/src/core/modules/nodes"
-)
+import "loquigo/engine/src/core/domain"
 
-func NewGroupSchema(group nodes.Group) (GroupSchema, error) {
+func NewGroupSchema(group domain.Group) (GroupSchema, error) {
 	return GroupSchema{
 		ID:           group.ID,
 		BotReference: group.BotReference,
@@ -20,6 +18,6 @@ type GroupSchema struct {
 	Name         string `bson:"name"`
 }
 
-func (f GroupSchema) ToDomain() nodes.Group {
-	return nodes.Group{ID: f.ID, BotReference: f.BotReference, BeginId: f.BeginId, Name: f.Name}
+func (f GroupSchema) ToDomain() domain.Group {
+	return domain.Group{ID: f.ID, BotReference: f.BotReference, BeginId: f.BeginId, Name: f.Name}
 }

@@ -1,6 +1,11 @@
 package nodes
 
-func NewNodeRunner(node Node) RunnerNode {
+import (
+	"loquigo/engine/src/core/domain"
+	"loquigo/engine/src/core/services/components"
+)
+
+func NewNodeRunner(node domain.Node) RunnerNode {
 	return NodeRunner{}
 }
 
@@ -9,13 +14,13 @@ type NodeRunner struct {
 	BotId      string `json:"bot_id"`
 	GroupId    string `json:"group_id"`
 	Name       string `json:"name"`
-	Components []RunnerComponent
+	Components []components.RunnerComponent
 }
 
-func (s NodeRunner) Run(message Message, context UserContext, messages []Message) ([]Message, *Stop, *GoTo) {
-	var goTo *GoTo
-	var stop *Stop
-	var newMessages []Message = messages
+func (s NodeRunner) Run(message domain.Message, context domain.UserContext, messages []domain.Message) ([]domain.Message, *domain.Stop, *domain.GoTo) {
+	var goTo *domain.GoTo
+	var stop *domain.Stop
+	var newMessages []domain.Message = messages
 	for _, component := range s.Components {
 		newMessages, stop, goTo = component.Run(message, context, newMessages)
 		if stop != nil {
@@ -25,10 +30,10 @@ func (s NodeRunner) Run(message Message, context UserContext, messages []Message
 			return newMessages, nil, goTo
 		}
 	}
-	return []Message{}, nil, nil
+	return []domain.Message{}, nil, nil
 }
 
-func (s NodeRunner) AddComponents(components []RunnerComponent) (RunnerNode, error) {
+func (s NodeRunner) AddComponents(components []components.RunnerComponent) (RunnerNode, error) {
 	return NodeRunner{Components: components}, nil
 }
 

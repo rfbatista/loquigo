@@ -2,7 +2,7 @@ package dialogmanager
 
 import (
 	"loquigo/engine/src/core/domain"
-	"loquigo/engine/src/core/modules/runner"
+	"loquigo/engine/src/core/services/runner"
 )
 
 func NewDialogManagerService(template runner.RunnerService, dialogmanager FindContextService) DialogManagerService {

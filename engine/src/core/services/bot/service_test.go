@@ -10,7 +10,7 @@ import (
 
 func TestBotService(t *testing.T) {
 	mockedRepo := new(mocks.MockBotRepository)
-	service := BotService{repo: mockedRepo}
+	service := BotService{botrepo: mockedRepo}
 	t.Run("it get all bots created", func(t *testing.T) {
 		t.Run("it call GetBots in repository", func(t *testing.T) {
 			expect := []domain.Bot{

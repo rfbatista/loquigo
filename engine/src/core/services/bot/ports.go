@@ -8,3 +8,9 @@ type BotRepository interface {
 	Create(bot domain.Bot) (domain.Bot, error)
 	Delete(bot domain.Bot) (domain.Bot, error)
 }
+
+type BotVersionRepository interface {
+	Create(bot domain.BotVersion) (domain.BotVersion, error)
+	FindByBotId(botId string) ([]domain.BotVersion, error)
+	FindByIdAndBotId(versionId string, botId string) (domain.BotVersion, error)
+}

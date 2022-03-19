@@ -2,8 +2,6 @@ package editorservice
 
 import (
 	"loquigo/engine/src/core/domain"
-	"loquigo/engine/src/core/modules/components"
-	"loquigo/engine/src/core/modules/nodes"
 )
 
 type BotEditor struct {
@@ -15,7 +13,7 @@ type BotEditor struct {
 }
 
 func (b BotEditor) ToDomain() domain.Bot {
-	return domain.Bot{ID: b.Id, Version: b.Version, BeginId: b.Begin, Name: b.Name}
+	return domain.Bot{ID: b.Id, CurrentVersion: b.Version, BeginId: b.Begin, Name: b.Name}
 }
 
 type GroupEditor struct {
@@ -25,12 +23,12 @@ type GroupEditor struct {
 	Nodes []StepEditor `yaml:"nodes"`
 }
 
-func (f *GroupEditor) ToDomain(botReference string) nodes.Group {
-	return nodes.Group{ID: f.ID, BotReference: botReference, Name: f.Name, BeginId: f.Begin}
+func (f *GroupEditor) ToDomain(botReference string) domain.Group {
+	return domain.Group{ID: f.ID, BotReference: botReference, Name: f.Name, BeginId: f.Begin}
 }
 
-func (f *GroupEditor) NodesToDomain(botReference string) []nodes.Node {
-	var nodes []nodes.Node
+func (f *GroupEditor) NodesToDomain(botReference string) []domain.Node {
+	var nodes []domain.Node
 	for _, node := range f.Nodes {
 		nodes = append(nodes, node.ToDomain(botReference, f.ID))
 	}
@@ -41,8 +39,8 @@ func (f *GroupEditor) AddNode(steps StepEditor) {
 	f.Nodes = append(f.Nodes, steps)
 }
 
-func (f GroupEditor) ComponentsToDomain(botReference string) []components.Component {
-	var components []components.Component
+func (f GroupEditor) ComponentsToDomain(botReference string) []domain.Component {
+	var components []domain.Component
 	for _, node := range f.Nodes {
 		for _, component := range node.Components {
 			components = append(components, component.ToDomain(botReference, f.ID, node.ID))
@@ -51,7 +49,7 @@ func (f GroupEditor) ComponentsToDomain(botReference string) []components.Compon
 	return components
 }
 
-func FlowDomainToEditorFlow(group nodes.Group) GroupEditor {
+func FlowDomainToEditorFlow(group domain.Group) GroupEditor {
 	return GroupEditor{ID: group.ID, Name: group.Name, Begin: group.BeginId}
 }
 
@@ -61,11 +59,11 @@ type StepEditor struct {
 	Components []ComponentEditor `yamls:"components"`
 }
 
-func (f StepEditor) ToDomain(botReference string, groupId string) nodes.Node {
-	return nodes.Node{ID: f.ID, BotReference: botReference, Name: f.Name, NodeId: groupId}
+func (f StepEditor) ToDomain(botReference string, groupId string) domain.Node {
+	return domain.Node{ID: f.ID, BotReference: botReference, Name: f.Name, NodeId: groupId}
 }
 
-func NodeDomainToEditorNode(step nodes.Node) StepEditor {
+func NodeDomainToEditorNode(step domain.Node) StepEditor {
 	var components []ComponentEditor
 	for _, domainComponent := range step.Components {
 		components = append(components, DomainComponentToEditorComponent(domainComponent))
@@ -82,15 +80,15 @@ type ComponentEditor struct {
 	Sequence int    `yaml:"sequence"`
 }
 
-func (f ComponentEditor) ToDomain(botReference string, groupId string, nodeId string) components.Component {
-	return components.Component{
+func (f ComponentEditor) ToDomain(botReference string, groupId string, nodeId string) domain.Component {
+	return domain.Component{
 		ID:           f.ID,
 		BotReference: botReference,
 		GroupId:      groupId,
 		NodeId:       nodeId,
 		Sequence:     f.Sequence,
 		Type:         f.Type,
-		Data: components.ComponentData{
+		Data: domain.ComponentData{
 			Text:    f.Text,
 			GroupId: f.GroupId,
 			NodeId:  f.NodeId,
@@ -98,7 +96,7 @@ func (f ComponentEditor) ToDomain(botReference string, groupId string, nodeId st
 	}
 }
 
-func DomainComponentToEditorComponent(component components.Component) ComponentEditor {
+func DomainComponentToEditorComponent(component domain.Component) ComponentEditor {
 	return ComponentEditor{
 		ID:       component.ID,
 		Type:     component.Type,
