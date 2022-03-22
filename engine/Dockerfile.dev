@@ -4,6 +4,6 @@ COPY . .
 RUN go get ./
 RUN go build
 RUN go get github.com/pilu/fresh
+EXPOSE 4000
 # RUN fresh
 CMD fresh
-EXPOSE 4000

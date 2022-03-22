@@ -38,6 +38,7 @@ services:
       - MONGO_PWD=123
       - MONGO_PORT=27017
       - MONGO_HOST=loquigo-mongodb
+      - GIN_MODE=debug
     volumes:
      - .:/app:rw,delegated
     networks:

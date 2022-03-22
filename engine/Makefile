@@ -7,6 +7,6 @@ wire:
 build:
 	docker-compose up --build
 dev:
-	docker-compose up
+	docker-compose -f docker-compose.yaml up --build
 debug:
 	docker-compose -f docker-compose.debug.yaml up --build
