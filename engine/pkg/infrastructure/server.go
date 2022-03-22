@@ -19,7 +19,6 @@ type Server struct {
 
 func (s Server) Start() {
 	r := adapters.NewRouter(gin.Default())
-	r.Router.Use(gin.Recovery())
 	r.Router.Use(cors.Default())
 	v1 := r.Router.Group("/v1")
 	r.AddEditorRoutes(v1, s.EditorController)

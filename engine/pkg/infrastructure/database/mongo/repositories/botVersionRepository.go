@@ -53,7 +53,7 @@ func (b BotVersionRepository) FindByBotId(botId string) ([]domain.BotVersion, er
 	return botVersions, nil
 }
 
-func (b BotRepository) FindByIdAndBotId(versionId string, botId string) (domain.BotVersion, error) {
+func (b BotVersionRepository) FindByIdAndBotId(versionId string, botId string) (domain.BotVersion, error) {
 	filter := bson.D{
 		primitive.E{Key: "id", Value: versionId},
 		primitive.E{Key: "bot_id", Value: botId},

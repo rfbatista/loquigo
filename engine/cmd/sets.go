@@ -18,6 +18,11 @@ import (
 // Repositories
 //*****************
 
+var BotVersionRepoSet = wire.NewSet(
+	repositories.NewBotVersionRepository,
+	wire.Bind(new(bot.BotVersionRepository), new(repositories.BotVersionRepository)),
+)
+
 var UserRepoSet = wire.NewSet(
 	repositories.NewUserRepository,
 	wire.Bind(new(eventmanager.UserRepository), new(repositories.UserRepository)),
@@ -63,6 +68,7 @@ var ContextServiceSet = wire.NewSet(
 )
 
 var BotServiceSet = wire.NewSet(
+	BotVersionRepoSet,
 	BotRepoSet,
 	bot.NewBotService,
 )
