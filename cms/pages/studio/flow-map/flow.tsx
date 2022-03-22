@@ -4,8 +4,6 @@ import StepNode from 'components/StepNode';
 import { useSelector } from 'react-redux';
 import { selectActiveFlow } from 'store/flow';
 import { Content, Header } from 'rsuite';
-import Panel from './panel';
-import { elements } from 'data/nodes';
 import React from 'react';
 import useGetSize from 'hooks/useGetSize';
 

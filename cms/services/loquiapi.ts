@@ -1,6 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
 import config from 'config';
-import mockBaseQuery from './mockBaseQuery';
 import axiosBaseQuery from './axiosBaseQuery';
 import { IStep } from 'types/step';
 
@@ -12,15 +11,37 @@ export const loquiapi = createApi({
     baseUrl: String(config.core.endpoint),
   }),
   endpoints: (builder) => ({
-		updateBot: builder.mutation({
-			query: (step) => ({ url: `/editor/`, method: 'PUT', data: {data: step} }),
+    updateBot: builder.mutation({
+      query: (step) => ({
+        url: `/editor/`,
+        method: 'PUT',
+        data: { data: step },
+      }),
       invalidatesTags: ['Bot'],
-		}),
+    }),
     getFlow: builder.query({
       query: (botId) => ({ url: `/flow/${botId}`, method: 'GET', data: null }),
     }),
     getBot: builder.query({
-      query: (botId) => ({ url: `/editor/${botId}`, method: 'GET', data: null }),
+      query: (botId) => ({
+        url: `/editor/${botId}`,
+        method: 'GET',
+        data: null,
+      }),
+    }),
+    getBotVersions: builder.query({
+      query: (botId) => ({
+        url: `/editor/${botId}/version`,
+        method: 'GET',
+        data: null,
+      }),
+    }),
+    getBotVersion: builder.query({
+      query: ({ botId, version }) => ({
+        url: `/editor/${botId}/version/${version}`,
+        method: 'GET',
+        data: null,
+      }),
     }),
     getStep: builder.query<IStep[], void>({
       query: (flowId) => ({
@@ -62,12 +83,7 @@ export const loquiapi = createApi({
         data: null,
       }),
       providesTags: (result, error, arg) =>
-        result
-          ? [
-              { type: 'Step' as const, id: result.id },
-              'Step',
-            ]
-          : ['Step'],
+        result ? [{ type: 'Step' as const, id: result.id }, 'Step'] : ['Step'],
     }),
     getFlowMap: builder.query({
       query: (flowId) => ({
@@ -89,12 +105,14 @@ export const loquiapi = createApi({
 export const {
   useGetFlowQuery,
   useGetStepQuery,
-	useGetStepByIdQuery,
+  useGetStepByIdQuery,
   useGetFlowMapQuery,
-	useDeleteComponentMutation,
+  useDeleteComponentMutation,
   useCreateStepMutation,
   useDeleteStepMutation,
   useUpdateStepMutation,
-	useUpdateBotMutation,
-	useGetBotQuery,
+  useUpdateBotMutation,
+  useGetBotQuery,
+	useGetBotVersionQuery,
+	useGetBotVersionsQuery,
 } = loquiapi;

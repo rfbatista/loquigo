@@ -1,25 +1,48 @@
 import React from 'react';
 import {
-  Container,
-  Content,
-  Header,
-  Sidebar,
-  Loader,
   toaster,
   Message,
+  Header,
   Navbar,
   Nav,
-  Dropdown,
-	InputPicker,
+  InputPicker,
+  Content,
   FlexboxGrid,
+  Container,
 } from 'rsuite';
+import {
+  useGetBotVersionsQuery,
+  useUpdateBotMutation,
+} from 'services/loquiapi';
+import Panel from '../panel/panel';
 import dynamic from 'next/dynamic';
-import Panel from './panel';
-import { useGetBotQuery, useUpdateBotMutation } from 'services/loquiapi';
 const MonacoEditor = dynamic(import('react-monaco-editor'), { ssr: false });
 
-const YamlEditor = ({ data }) => {
+const formatVersionToInputPicker = (data) => {
+  return data
+    ? data.map((version) => {
+        return { label: 'Eugenia', value: 'Eugenia', role: 'Master' };
+      })
+    : [];
+};
+
+const formatBotsToInputPicker = (data) => {
+  return data
+    ? data.map((version) => {
+        return { label: 'Eugenia', value: 'Eugenia', role: 'Master' };
+      })
+    : [];
+};
+
+type YamlEditorProps = {
+  data: string;
+  botId: string;
+};
+const YamlEditor: React.FC<YamlEditorProps> = ({ data, botId }) => {
   const [postBody, setPostBody] = React.useState(data);
+  const { data: botVersions, isFetching, isLoading } = useGetBotVersionsQuery(
+    botId
+  );
   const [updateBot, { isLoading: isUpdating }] = useUpdateBotMutation();
   const send = () => {
     updateBot(postBody)
@@ -46,7 +69,16 @@ const YamlEditor = ({ data }) => {
               <Panel updateBot={send} isLoading={isUpdating} />
             </Nav.Item>
             <Nav.Item>
-              <InputPicker style={{ width: 224 }} />
+              <InputPicker
+                data={formatVersionToInputPicker(botVersions)}
+                style={{ width: 224 }}
+              />
+            </Nav.Item>
+            <Nav.Item>
+              <InputPicker
+                data={formatVersionToInputPicker(botVersions)}
+                style={{ width: 224 }}
+              />
             </Nav.Item>
           </Nav>
         </Navbar>
@@ -93,20 +125,4 @@ const YamlEditor = ({ data }) => {
   );
 };
 
-const Studio = () => {
-  const { data, isFetching, isLoading } = useGetBotQuery('teste');
-  if (isFetching || isLoading)
-    return <Loader backdrop inverse center content='loading...' vertical />;
-  return (
-    <div className='grid place-items-center h-screen'>
-      <Container
-        className='place-items-center w-full h-full'
-        style={{ height: '100vh' }}
-      >
-        <YamlEditor data={data} />
-      </Container>
-    </div>
-  );
-};
-
-export default Studio;
+export default YamlEditor;

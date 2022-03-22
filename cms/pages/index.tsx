@@ -1,5 +1,5 @@
 import type { NextPage } from 'next';
-import Studio from './studio/studio';
+import Studio from './studio';
 
 const Home: NextPage = () => {
   return <Studio />;

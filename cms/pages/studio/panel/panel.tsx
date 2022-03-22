@@ -1,10 +1,5 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import Actions from './panel/actions';
-import { selectActiveStep, selectStepById, stepSelector } from 'store/step';
-import StepActions from './panel/stepsactions';
 import Button from 'rsuite/Button';
-import { Sidebar, Sidenav } from 'rsuite';
 
 const Panel = ({ updateBot, isLoading }) => {
   return (
