@@ -19,7 +19,12 @@ type Server struct {
 
 func (s Server) Start() {
 	r := adapters.NewRouter(gin.Default())
-	r.Router.Use(cors.Default())
+	r.Router.Use(cors.New(cors.Config{
+		AllowOrigins:  []string{"http://localhost:3000"},
+		AllowMethods:  []string{"PUT", "PATCH", "GET", "POST"},
+		AllowHeaders:  []string{"Origin"},
+		ExposeHeaders: []string{"Content-Length"},
+	}))
 	v1 := r.Router.Group("/v1")
 	r.AddEditorRoutes(v1, s.EditorController)
 	r.AddChatRoutes(v1, s.ChatController)

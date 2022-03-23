@@ -22,9 +22,16 @@ export const loquiapi = createApi({
     getFlow: builder.query({
       query: (botId) => ({ url: `/flow/${botId}`, method: 'GET', data: null }),
     }),
-    getBot: builder.query({
+    getBotYaml: builder.query({
       query: (botId) => ({
         url: `/editor/${botId}`,
+        method: 'GET',
+        data: null,
+      }),
+    }),
+    getBotList: builder.query({
+      query: () => ({
+        url: `/bot/`,
         method: 'GET',
         data: null,
       }),
@@ -112,7 +119,8 @@ export const {
   useDeleteStepMutation,
   useUpdateStepMutation,
   useUpdateBotMutation,
-  useGetBotQuery,
+  useGetBotYamlQuery,
 	useGetBotVersionQuery,
 	useGetBotVersionsQuery,
+	useGetBotListQuery,
 } = loquiapi;
