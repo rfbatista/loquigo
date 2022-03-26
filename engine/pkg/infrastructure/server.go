@@ -22,8 +22,8 @@ func (s Server) Start() {
 	r.Router.Use(cors.New(cors.Config{
 		AllowOrigins:  []string{"http://localhost:3000"},
 		AllowMethods:  []string{"PUT", "PATCH", "GET", "POST"},
-		AllowHeaders:  []string{"Origin"},
-		ExposeHeaders: []string{"Content-Length"},
+		AllowHeaders:  []string{"Origin", "Content-Type"},
+		ExposeHeaders: []string{"Content-Length", "Content-Type"},
 	}))
 	v1 := r.Router.Group("/v1")
 	r.AddEditorRoutes(v1, s.EditorController)

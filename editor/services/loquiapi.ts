@@ -2,11 +2,12 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import config from 'config';
 import axiosBaseQuery from './axiosBaseQuery';
 import { IStep } from 'types/step';
+import { Bot } from 'types/bot';
 
 export const FLOW_API_REDUCER_KEY = 'FLOW_API';
 export const loquiapi = createApi({
   reducerPath: FLOW_API_REDUCER_KEY,
-  tagTypes: ['Step', 'Bot'],
+  tagTypes: ['Step', 'Bot', 'Bots'],
   baseQuery: axiosBaseQuery({
     baseUrl: String(config.core.endpoint),
   }),
@@ -35,6 +36,15 @@ export const loquiapi = createApi({
         method: 'GET',
         data: null,
       }),
+			providesTags: ['Bots']
+    }),
+    createBot: builder.mutation<Bot, Partial<Bot>>({
+      query: (bot) => ({
+        url: `/bot/`,
+        method: 'POST',
+        data: bot,
+      }),
+      invalidatesTags: ['Bots'],
     }),
     getBotVersions: builder.query({
       query: (botId) => ({
@@ -120,7 +130,8 @@ export const {
   useUpdateStepMutation,
   useUpdateBotMutation,
   useGetBotYamlQuery,
-	useGetBotVersionQuery,
-	useGetBotVersionsQuery,
-	useGetBotListQuery,
+  useGetBotVersionQuery,
+  useGetBotVersionsQuery,
+  useGetBotListQuery,
+  useCreateBotMutation,
 } = loquiapi;
