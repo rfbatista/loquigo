@@ -6,6 +6,9 @@ import Magic from '@rsuite/icons/legacy/Magic';
 import GearCircle from '@rsuite/icons/legacy/GearCircle';
 import EditorPanel from 'components/panel';
 
+
+// TODO: move implematation details from here to pages
+
 const SidePanel = () => {
   const [activeKey, setActiveKey] = React.useState<string | undefined>('1');
   return (

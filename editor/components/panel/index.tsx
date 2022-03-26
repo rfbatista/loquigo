@@ -45,6 +45,7 @@ const BotPicker = () => {
         placeholder='Selecionar'
         size='xs'
         data={formatBotsToInputPicker(botList)}
+				onChange={((data)=>console.log(data))}
       />
     </>
   );
