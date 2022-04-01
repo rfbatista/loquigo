@@ -1,3 +1,5 @@
-*/node_modules
-node_modules
-go
+.git
+Dockerfile*
+docker-compose.yaml
+Makefile
+.env

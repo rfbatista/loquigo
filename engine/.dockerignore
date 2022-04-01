@@ -1,5 +1,0 @@
-.git
-Dockerfile*
-docker-compose.yaml
-Makefile
-.env

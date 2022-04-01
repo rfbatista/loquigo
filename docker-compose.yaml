@@ -1,68 +1,47 @@
 version: "3.8"
 
 networks:
-  loqui-network-dev:
+  loquigo-network:
 
 volumes:
-  loqui-data:
-    name: loqui-data 
+  loquigo-data:
+    name: loquigo-data 
 
 services:
-  loqui-mongodb:
-    container_name: loqui-mongodb
+  loquigo-mongodb:
+    container_name: loquigo-mongodb
     image: mongo:4.2
     restart: always
     command: mongod --quiet --logpath /dev/null 
-    env_file: 
-      - ./engine/.env
     ports:
-      - $MONGO_PORT:27017
+      - 4001:27017
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=$MONGO_DB_USER
-      - MONGO_INITDB_ROOT_PASSWORD=$MONGO_PWD
-      - MONGO_INITDB_DATABASE=$MONGO_DB_NAME
+      - MONGO_INITDB_ROOT_USERNAME=user
+      - MONGO_INITDB_ROOT_PASSWORD=123
+      - MONGO_INITDB_DATABASE=loquigo
     networks:
-      - loqui-network-dev
+      - loquigo-network
     volumes:
-      - loqui-data:/data/db
+      - loquigo-data:/data/db
 
-  loqui-api:
+  loquigo-api:
     build:
-      context: ./engine/
+      context: .
       dockerfile: ./Dockerfile.dev
-    container_name: loqui-api
-    env_file: .env
+    container_name: loquigo-api
     ports:
       - 4000:4000
       - 2345:2345
     environment:
-      - MONGO_DB_NAME=$MONGO_DB_NAME
-      - MONGO_DB_USER=$MONGO_DB_USER
-      - MONGO_PWD=$MONGO_PWD
+      - MONGO_DB_NAME=loquigo
+      - MONGO_DB_USER=user
+      - MONGO_PWD=123
       - MONGO_PORT=27017
-      - MONGO_HOST=loqui-mongodb
+      - MONGO_HOST=loquigo-mongodb
+      - GIN_MODE=debug
     volumes:
-     - ./engine:/app:rw,delegated
+     - .:/app:rw,delegated
     networks:
-      - loqui-network-dev
+      - loquigo-network
     depends_on:
-      - loqui-mongodb
-
-  loquistudio:
-    build:
-      context: ./cms/
-      dockerfile: ./Dockerfile
-    container_name: loqui-studio
-    ports:
-      - 3000:3000
-      - 9230:9229
-    environment:
-      - LOQUI_API=http://loqui-api:4000/v1
-    volumes:
-      - type: bind
-        source: ./cms/
-        target: /app
-    networks:
-      - loqui-network-dev
-    depends_on:
-      - loqui-mongodb
+      - loquigo-mongodb
