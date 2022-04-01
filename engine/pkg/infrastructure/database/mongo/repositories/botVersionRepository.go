@@ -23,11 +23,12 @@ type BotVersionRepository struct {
 }
 
 func (u BotVersionRepository) Create(bot domain.BotVersion) (domain.BotVersion, error) {
-	_, err := u.collection.InsertOne(context.Background(), bot)
+	botSchema := schemas.NewBotVersionSchema(bot)
+	_, err := u.collection.InsertOne(context.Background(), botSchema)
 	if err != nil {
 		return bot, err
 	}
-	return bot, nil
+	return botSchema.ToDomain(), nil
 }
 
 func (b BotVersionRepository) FindByBotId(botId string) ([]domain.BotVersion, error) {

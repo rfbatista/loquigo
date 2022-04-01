@@ -7,8 +7,10 @@
 package cmd
 
 import (
-	"loquigo/engine/pkg/adapters/services/editor"
-	"loquigo/engine/pkg/adapters/transport/http"
+	"go.uber.org/zap"
+	bot2 "loquigo/engine/pkg/adapters/bot"
+	"loquigo/engine/pkg/adapters/chat"
+	"loquigo/engine/pkg/adapters/editor"
 	"loquigo/engine/pkg/core/services/bot"
 	"loquigo/engine/pkg/core/services/components"
 	"loquigo/engine/pkg/core/services/dialogmanager"
@@ -22,7 +24,7 @@ import (
 
 // Injectors from wire.go:
 
-func InitializeEvent(db mongo.MongoDB) (infrastructure.Server, error) {
+func InitializeEvent(db mongo.MongoDB, logger *zap.Logger) (infrastructure.Server, error) {
 	groupRepository := repositories.NewGroupRepository(db)
 	groupService := nodes.NewGroupService(groupRepository)
 	nodeRepository := repositories.NewNodeRepository(db)
@@ -32,8 +34,9 @@ func InitializeEvent(db mongo.MongoDB) (infrastructure.Server, error) {
 	botRepository := repositories.NewBotRepository(db)
 	botVersionRepository := repositories.NewBotVersionRepository(db)
 	botService := bot.NewBotService(botRepository, botVersionRepository)
-	editorService := editorservice.NewEditor(groupService, nodeService, componentService, botService)
-	editorController := adapters.NewEditorController(editorService)
+	infrastructureLogger := infrastructure.NewLogger(logger)
+	editorService := editor.NewEditor(groupService, nodeService, componentService, botService, infrastructureLogger)
+	editorController := editor.NewEditorController(editorService)
 	userStatesRepo := repositories.NewUserStatestRepo(db)
 	runnerComponentService := components.NewRunnerComponentService(componentRepository)
 	runnerNodeService := nodes.NewRunnerNodeService(botService, groupRepository, nodeRepository, runnerComponentService)
@@ -43,8 +46,8 @@ func InitializeEvent(db mongo.MongoDB) (infrastructure.Server, error) {
 	findContextService := dialogmanager.NewFindContextService(userContextRepository)
 	dialogManagerService := dialogmanager.NewDialogManagerService(runnerService, findContextService)
 	chatService := eventmanager.NewChatService(dialogManagerService)
-	chatController := adapters.NewChatController(chatService)
-	botController := adapters.NewBotController(botService)
+	chatController := chat.NewChatController(chatService)
+	botController := bot2.NewBotController(botService)
 	server := infrastructure.NewServer(editorController, chatController, botController)
 	return server, nil
 }

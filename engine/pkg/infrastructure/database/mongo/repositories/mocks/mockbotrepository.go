@@ -14,7 +14,15 @@ func (u MockBotRepository) Create(bot domain.Bot) (domain.Bot, error) {
 	return domain.Bot{}, nil
 }
 
+func (u MockBotRepository) Update(bot domain.Bot) (domain.Bot, error) {
+	return domain.Bot{}, nil
+}
+
 func (u MockBotRepository) Delete(bot domain.Bot) (domain.Bot, error) {
+	return domain.Bot{}, nil
+}
+
+func (b MockBotRepository) FindById(botId string) (domain.Bot, error) {
 	return domain.Bot{}, nil
 }
 

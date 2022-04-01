@@ -1,8 +1,7 @@
-package editorservice
+package editor
 
 import (
-	"log"
-	adapterservices "loquigo/engine/pkg/adapters/services"
+	"loquigo/engine/pkg/adapters"
 	"loquigo/engine/pkg/core/domain"
 	"loquigo/engine/pkg/core/services/bot"
 	"loquigo/engine/pkg/core/services/components"
@@ -11,8 +10,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func NewEditor(f nodes.GroupService, s nodes.NodeService, c components.ComponentService, b bot.BotService) EditorService {
-	return EditorService{groupService: f, nodeService: s, componentService: c, botService: b}
+func NewEditor(f nodes.GroupService, s nodes.NodeService, c components.ComponentService, b bot.BotService, l adapters.Logger) EditorService {
+	return EditorService{groupService: f, nodeService: s, componentService: c, botService: b, logger: l}
 }
 
 type EditorService struct {
@@ -20,18 +19,21 @@ type EditorService struct {
 	groupService     nodes.GroupService
 	nodeService      nodes.NodeService
 	componentService components.ComponentService
+	logger           adapters.Logger
 }
 
-func (e EditorService) UpdateBot(data string) (adapterservices.Result, error) {
+func (e EditorService) UpdateBot(data string, version string, botId string) (adapters.Result, error) {
 	var botSchema BotEditor
 	err := yaml.Unmarshal([]byte(data), &botSchema)
 	if err != nil {
-		log.Fatalf("error: %v", err)
-		return adapterservices.Result{}, err
+		e.logger.Error("error: %v", err)
+		return adapters.Result{}, err
 	}
-	bot, err := e.botService.CreateBot(botSchema.ToDomain())
+	bot, err := e.botService.UpdateBot(botSchema.ToDomain(version, botId))
+	e.botService.CreateVersion(bot, version, data)
 	if err != nil {
-		return adapterservices.Result{}, err
+		e.logger.Error("error: %v", err)
+		return adapters.Result{}, err
 	}
 	botReference := bot.Reference()
 	for _, group := range botSchema.Groups {
@@ -45,10 +47,12 @@ func (e EditorService) UpdateBot(data string) (adapterservices.Result, error) {
 		}
 		e.groupService.NewGroup(group.ToDomain(botReference))
 	}
-	return adapterservices.Result{}, nil
+	return adapters.Result{}, nil
 }
 
 func (e EditorService) FindBot(botId string) (BotEditor, error) {
+	bot, _ := e.botService.FindBotById(botId)
+	botEditor := BotDomainToEditor(bot)
 	flows, _ := e.groupService.FindByBotId(botId)
 
 	var editorFlows []GroupEditor
@@ -69,7 +73,8 @@ func (e EditorService) FindBot(botId string) (BotEditor, error) {
 			finalEditorFlows = append(finalEditorFlows, editorFlow)
 		}
 	}
-	return BotEditor{Groups: finalEditorFlows}, nil
+	botEditor.AddGroups(finalEditorFlows)
+	return botEditor, nil
 }
 
 func (e EditorService) FindBotVersions(botId string) ([]domain.BotVersion, error) {

@@ -1,4 +1,4 @@
-package adapterservices
+package adapters
 
 type Result struct {
 	Data interface{}

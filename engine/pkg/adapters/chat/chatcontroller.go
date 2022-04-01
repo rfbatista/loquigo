@@ -1,4 +1,4 @@
-package adapters
+package chat
 
 import (
 	"net/http"
@@ -13,14 +13,14 @@ func NewChatController(e eventmanager.ChatService) ChatController {
 	return ChatController{eventService: e}
 }
 
-func (r HttpRouter) AddChatRoutes(rg *gin.RouterGroup, controller ChatController) {
-	route := rg.Group("/chat")
-
-	route.POST("/", controller.PostMessage)
-}
-
 type ChatController struct {
 	eventService eventmanager.ChatService
+}
+
+func (r ChatController) AddChatRoutes(rg *gin.RouterGroup) {
+	route := rg.Group("/chat")
+
+	route.POST("/", r.PostMessage)
 }
 
 func (chat ChatController) PostMessage(c *gin.Context) {

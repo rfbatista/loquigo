@@ -37,6 +37,32 @@ func (u BotRepository) Create(bot domain.Bot) (domain.Bot, error) {
 	return bot, nil
 }
 
+func (u BotRepository) Update(bot domain.Bot) (domain.Bot, error) {
+	filter := bson.D{{"id", bot.ID}}
+	update := bson.D{{"$set", bson.D{{"version", bot.CurrentVersion}}}}
+	opts := options.Update().SetUpsert(false)
+	// TODO: talvez devo montar o schema e retornar toda a autalizacao
+	_, err := u.collection.UpdateOne(context.TODO(), filter, update, opts)
+	if err != nil {
+		return bot, err
+	}
+	return bot, nil
+}
+
+func (b BotRepository) FindById(botId string) (domain.Bot, error) {
+	filter := bson.D{
+		primitive.E{Key: "id", Value: botId},
+	}
+	projection := bson.D{}
+	opts := options.FindOne().SetProjection(projection)
+	var schema schemas.BotSchema
+	err := b.collection.FindOne(context.Background(), filter, opts).Decode(&schema)
+	if err != nil {
+		return domain.Bot{}, err
+	}
+	return schema.ToDomain(), nil
+}
+
 func (b BotRepository) FindBeginByBotId(botId string) (string, error) {
 	filter := bson.D{
 		primitive.E{Key: "id", Value: botId},

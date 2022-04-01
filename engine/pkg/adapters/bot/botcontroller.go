@@ -1,4 +1,4 @@
-package adapters
+package bot
 
 import (
 	"loquigo/engine/pkg/core/domain"
@@ -12,15 +12,15 @@ func NewBotController(b bot.BotService) BotController {
 	return BotController{service: b}
 }
 
-func (r HttpRouter) AddBotRoutes(rg *gin.RouterGroup, controller BotController) {
-	route := rg.Group("/bot")
-
-	route.GET("/", controller.GetBots)
-	route.POST("/", controller.CreateBot)
-}
-
 type BotController struct {
 	service bot.BotService
+}
+
+func (r BotController) AddBotRoutes(rg *gin.RouterGroup) {
+	route := rg.Group("/bot")
+
+	route.GET("/", r.GetBots)
+	route.POST("/", r.CreateBot)
 }
 
 func (b BotController) GetBots(c *gin.Context) {

@@ -1,19 +1,25 @@
-package editorservice
+package editor
 
 import (
 	"loquigo/engine/pkg/core/domain"
 )
 
 type BotEditor struct {
-	Id      string        `yaml:"id"`
-	Name    string        `yaml:"name"`
-	Begin   string        `yaml:"begin"`
-	Version string        `yaml:"version"`
-	Groups  []GroupEditor `yaml:"groups"`
+	Name   string        `yaml:"name"`
+	Begin  string        `yaml:"begin"`
+	Groups []GroupEditor `yaml:"groups"`
 }
 
-func (b BotEditor) ToDomain() domain.Bot {
-	return domain.Bot{ID: b.Id, CurrentVersion: b.Version, BeginId: b.Begin, Name: b.Name}
+func BotDomainToEditor(bot domain.Bot) BotEditor {
+	return BotEditor{Name: bot.Name, Begin: bot.BeginId}
+}
+
+func (b BotEditor) ToDomain(version string, botID string) domain.Bot {
+	return domain.Bot{ID: botID, CurrentVersion: version, BeginId: b.Begin, Name: b.Name}
+}
+
+func (b BotEditor) AddGroups(groups []GroupEditor) {
+	b.Groups = append(b.Groups, groups...)
 }
 
 type GroupEditor struct {

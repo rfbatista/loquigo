@@ -7,6 +7,8 @@ type BotRepository interface {
 	GetBots() ([]domain.Bot, error)
 	Create(bot domain.Bot) (domain.Bot, error)
 	Delete(bot domain.Bot) (domain.Bot, error)
+	Update(bot domain.Bot) (domain.Bot, error)
+	FindById(botId string) (domain.Bot, error)
 }
 
 type BotVersionRepository interface {

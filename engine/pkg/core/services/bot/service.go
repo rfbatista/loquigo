@@ -11,6 +11,14 @@ type BotService struct {
 	versionrepo BotVersionRepository
 }
 
+func (b BotService) FindBotById(botId string) (domain.Bot, error) {
+	bot, err := b.botrepo.FindById(botId)
+	if err != nil {
+		return bot, err
+	}
+	return bot, nil
+}
+
 func (b BotService) FindBotBegin(botId string) (string, error) {
 	flowId, _ := b.botrepo.FindBeginByBotId(botId)
 	return flowId, nil
@@ -35,13 +43,21 @@ func (b BotService) CreateBot(bot domain.Bot) (domain.Bot, error) {
 	return saveBot, nil
 }
 
+func (b BotService) UpdateBot(bot domain.Bot) (domain.Bot, error) {
+	saveBot, err := b.botrepo.Update(bot)
+	if err != nil {
+		return domain.Bot{}, err
+	}
+	return saveBot, nil
+}
+
 func (b BotService) DeleteBot(bot domain.Bot) (domain.Bot, error) {
 	deletedBot, _ := b.botrepo.Delete(bot)
 	return deletedBot, nil
 }
 
-func (b BotService) CreateVersion(bot domain.Bot, versionId string) (domain.BotVersion, error) {
-	version := domain.BotVersion{ID: versionId, BotId: bot.ID}
+func (b BotService) CreateVersion(bot domain.Bot, versionId string, yaml string) (domain.BotVersion, error) {
+	version := domain.BotVersion{ID: versionId, BotId: bot.ID, Yaml: yaml}
 	botVersionCreated, _ := b.versionrepo.Create(version)
 	return botVersionCreated, nil
 }

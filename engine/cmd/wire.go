@@ -4,15 +4,16 @@
 package cmd
 
 import (
-	infra "loquigo/engine/pkg/infrastructure"
+	"go.uber.org/zap"
+	"loquigo/engine/pkg/infrastructure"
 	"loquigo/engine/pkg/infrastructure/database/mongo"
 
 	"github.com/google/wire"
 )
 
-func InitializeEvent(db mongo.MongoDB) (infra.Server, error) {
+func InitializeEvent(db mongo.MongoDB, logger *zap.Logger) (infrastructure.Server, error) {
 	wire.Build(
 		ControllersSet,
-		infra.NewServer)
-	return infra.Server{}, nil
+		infrastructure.NewServer)
+	return infrastructure.Server{}, nil
 }
