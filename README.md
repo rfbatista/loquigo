@@ -1,4 +1,4 @@
-# WIP
+# Work in progress
 
 | Status | Feature           | Release |
 |--------|-------------------|---------|
