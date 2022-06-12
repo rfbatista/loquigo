@@ -1,13 +1,4 @@
 # WIP
 
-| Status | Feature           | Release |
-|--------|-------------------|---------|
-|        | Dialog Registry   |         |
-|        | Dialog Manager    |         |
-|        | Event Manager     |         |
-|        | History           |         |
-|        | Provider Registry |         |
-|        | Reply Engine      |         |
-|        | Bot Registry      |         |
-|        | Context Manager   |         |
+A blazingly fast chatbot engine to create chatbot from the highest abstraction to the deep of details, whatever meet your needs :).
 

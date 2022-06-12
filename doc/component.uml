@@ -1,0 +1,44 @@
+@startuml
+package "EventManager" {
+  [EventHandler]
+}
+
+package "Database" {
+  [Mongo]
+}
+
+package "History" {
+  [HistoryService]
+  [HistoryModel]
+}
+
+package "Message" {
+  [MessageModel]
+}
+
+package "Dialog" {
+  [State]
+  [Action]
+  [Transition]
+  [Condition]
+  [Event]
+}
+
+package "Bot" {
+  [BotModel]
+  [BotVersionModel]
+  [BotService]
+}
+
+package "User" {
+  [Context]
+  [State]
+  [UserModel]
+  [UserService]
+}
+
+package "Engine" {
+  [Runner]
+}
+
+@enduml

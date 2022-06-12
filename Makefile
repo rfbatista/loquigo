@@ -10,3 +10,5 @@ dev:
 	docker-compose -f docker-compose.yaml up --build
 debug:
 	docker-compose -f docker-compose.debug.yaml up --build
+database:
+	docker-compose -f docker-compose.yaml --profile database up --build
