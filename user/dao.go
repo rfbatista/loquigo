@@ -38,7 +38,7 @@ func toModel(schema UserSchema) *User {
 
 func FindByExternalId(externalId string) (*User, error) {
 	db := database.GetMongoConnection()
-	filter := bson.D{{"external_id", externalId}}
+	filter := bson.M{"external_id": externalId}
 	var result UserSchema
 	err := db.Collection(collection).FindOne(context.Background(), filter).Decode(&result)
 	if err != nil {
@@ -49,7 +49,7 @@ func FindByExternalId(externalId string) (*User, error) {
 
 func FindById(id string) (*User, error) {
 	db := database.GetMongoConnection()
-	filter := bson.D{{"_id", id}}
+	filter := bson.M{"_id": id}
 	var result UserSchema
 	err := db.Collection(collection).FindOne(context.Background(), filter).Decode(&result)
 	if err != nil {

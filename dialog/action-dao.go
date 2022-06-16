@@ -7,34 +7,27 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type Condition struct {
-	Id string
+type ActionDAO struct {
+	Id   string
+	Type string
 }
 
-func (c Condition) IsValid(event Event) bool {
-	return true
-}
-
-type ConditionDAO struct {
-	Id string
-}
-
-func (u *ConditionDAO) Save() {
+func (u *ActionDAO) Save() {
 	db := database.GetMongoConnection()
 	db.Collection(collection).InsertOne(context.TODO(), u)
 }
 
-func conditionToModel(a ConditionDAO) *Condition {
-	return &Condition{}
+func actionToModel(a ActionDAO) *Action {
+	return &Action{}
 }
 
-func FindConditionById(id string) (*Condition, error) {
+func FindById(id string) (*Action, error) {
 	db := database.GetMongoConnection()
 	filter := bson.M{"_id": id}
-	var result ConditionDAO
+	var result ActionDAO
 	err := db.Collection(collection).FindOne(context.Background(), filter).Decode(&result)
 	if err != nil {
 		return nil, err
 	}
-	return conditionToModel(result), nil
+	return actionToModel(result), nil
 }
