@@ -1,12 +1,32 @@
 package dialog
 
-func Start(event Event) State {
-	return State{}
+import (
+	"context"
+	"loquigo/engine/database"
+)
+
+type StateType int16
+
+const (
+	UndefinedState StateType = iota
+	HoldState
+	DefaultState
+)
+
+func (m StateType) String() string {
+	switch m {
+	case HoldState:
+		return "hold"
+	case DefaultState:
+		return "default"
+	}
+	return "unknown"
 }
 
 type State struct {
-	Id          string
-	Name        string
+	Id          string `bson:"_id"`
+	Name        string `bson:"name"`
+	Type        StateType
 	Transitions []Transition
 }
 
@@ -14,7 +34,7 @@ func (s State) Next(event Event) (State, *string, error) {
 	return State{}, nil, nil
 }
 
-type StateDAO struct {
-	Id   string
-	Name string
+func (s *State) Save() {
+	db := database.GetMongoConnection()
+	db.Collection(stateCollection).InsertOne(context.TODO(), s)
 }

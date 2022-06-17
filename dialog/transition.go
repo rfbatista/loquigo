@@ -1,14 +1,20 @@
 package dialog
 
+import (
+	"context"
+	"loquigo/engine/database"
+)
+
 type Transition struct {
-	from       string
-	to         string
-	conditions []Condition
-	actions    []Action
+	Id         string `bson:"_id"`
+	From       string `bson:"from"`
+	To         string `bson:"to"`
+	Conditions []Condition
+	Actions    []Action
 }
 
-func (t Transition) IsValid(event Event) bool {
-	for _, condition := range t.conditions {
+func (t *Transition) IsValid(event Event) bool {
+	for _, condition := range t.Conditions {
 		if condition.IsValid(event) {
 			return true
 		}
@@ -16,7 +22,7 @@ func (t Transition) IsValid(event Event) bool {
 	return false
 }
 
-type TransitionDAO struct {
-	From string
-	To   string
+func (t *Transition) Save() {
+	db := database.GetMongoConnection()
+	db.Collection(transitionCollection).InsertOne(context.TODO(), t)
 }

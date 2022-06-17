@@ -1,6 +1,8 @@
 package dialog
 
 import (
+	"context"
+	"loquigo/engine/database"
 	"loquigo/engine/message"
 )
 
@@ -24,20 +26,18 @@ func (m ActionType) String() string {
 	return "unknown"
 }
 
-type TextData struct {
-	Body string
-}
-
-type ActionData struct {
-	ActionMessage message.Message
-}
-
 type Action struct {
-	id   string
-	Type ActionType
-	Data ActionData
+	Id           string     `bson:"_id"`
+	TransitionID string     `bson:"transition_id"`
+	Type         ActionType `bson:"type"`
+	Data         ActionData `bson:"data,inline"`
 }
 
-func (a Action) Run(event Event) *message.Message {
+func (a *Action) Run(event Event) *message.Message {
 	return &a.Data.ActionMessage
+}
+
+func (a *Action) Save() {
+	db := database.GetMongoConnection()
+	db.Collection(actionCollection).InsertOne(context.TODO(), a)
 }
